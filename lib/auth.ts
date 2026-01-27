@@ -11,6 +11,8 @@ import GithubProvider from "next-auth/providers/github";
 import { getServerSession } from "next-auth"
 import type { JWT } from "next-auth/jwt";
 
+import prisma from "@/lib/prisma";
+
 export const nextAuthConfig = {
     providers: [GithubProvider({
         clientId: process.env.GITHUB_ID!,
@@ -28,7 +30,23 @@ export const nextAuthConfig = {
                     name: user.name,
                     githubUsername: profile.login,
                 };
-                // Need to add to database here if new user?
+                // Add to database here if new user
+                await prisma.user.upsert({
+                    where: { githubId: BigInt(profile.id) },
+                    update: {
+                        email: user.email!,
+                        name: user.name!,
+                        githubUsername: profile.login,
+                    },
+                    create: {
+                        githubId: BigInt(profile.id),
+                        email: user.email!,
+                        name: user.name!,
+                        githubUsername: profile.login,
+                    },
+                }).catch((err) => {
+                    console.error("Error upserting user in JWT callback:", err);
+                });
                 return newToken;
             } else {
                 return token;
