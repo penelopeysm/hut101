@@ -11,7 +11,8 @@ pnpm exec prisma generate   # Generate Prisma client
 
 (The Prisma client is a bunch of TypeScript code that mimics the structure of the database defined inside `.env`, and lets you write SQL queries in a type-safe way, i.e., you can get back typed objects from the database.)
 
-Then, set up the database.
+If you are using the shared development database, you can skip this step.
+Otherwise, if you are using your own database, you need to create the database with the right schema and with some data:
 
 > [!WARNING]
 > This will erase all existing data in the database, so is only suitable for development purposes!
