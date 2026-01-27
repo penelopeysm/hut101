@@ -36,7 +36,7 @@ export default async function Home() {
         <main className="container mx-auto p-4">
             <LoginStatus session={session} />
 
-            <h1 className="text-2xl font-bold mb-4" >Users List</h1>
+            <h1 className="text-2xl font-bold mb-4">All users who have logged in ... so far!</h1>
             <ul className="list-disc pl-5">
                 {users.map((user) => (
                     <li key={user.id} className="mb-2">
@@ -46,7 +46,7 @@ export default async function Home() {
                         >
                             {user.githubUsername} (id: {user.githubId})
                             {user.githubId == currentUserId && (
-                                <span className="ml-1 text-gray-500">&lt;-- This is you!</span>
+                                <span className="ml-1 text-gray-500">&lt;- This is you :)</span>
                             )}
                         </a>
                     </li>
