@@ -27,6 +27,28 @@ async function LoginStatus({ session }: LoginStatusProps) {
     )
 }
 
+async function submitProject(formData: FormData) {
+    "use server";
+
+    const session = await auth();
+    if (!session?.user?.githubId) {
+        throw new Error("Not authenticated");
+    }
+
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+
+    await prisma.project.create({
+        data: {
+            title,
+            description,
+            mentor: {
+                connect: { githubId: session.user.githubId },
+            },
+        },
+    });
+}
+
 export default async function Home() {
     const session = await auth();
     const currentUserId = session?.user?.githubId;
@@ -36,22 +58,56 @@ export default async function Home() {
         <main className="container mx-auto p-4">
             <LoginStatus session={session} />
 
-            <h1 className="text-2xl font-bold mb-4">All users who have logged in ... so far!</h1>
-            <ul className="list-disc pl-5">
-                {users.map((user) => (
-                    <li key={user.id} className="mb-2">
-                        <a href={`https://github.com/${user.githubUsername}`}
-                            target="_blank" rel="noopener noreferrer"
-                            className={`text-blue-600 hover:underline ${user.githubId === currentUserId ? 'font-bold' : ''}`}
-                        >
-                            {user.githubUsername} (id: {user.githubId})
-                            {user.githubId == currentUserId && (
-                                <span className="ml-1 text-gray-500">&lt;- This is you :)</span>
-                            )}
-                        </a>
-                    </li>
-                ))}
-            </ul>
+            <div className="submit-project max-w-md mt-8">
+                <h2 className="text-xl font-semibold mb-4">Submit a project</h2>
+
+                <form action={submitProject} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium">Title</label>
+                        <input
+                            name="title"
+                            required
+                            className="w-full border rounded px-3 py-2"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium">Description</label>
+                        <textarea
+                            name="description"
+                            required
+                            className="w-full border rounded px-3 py-2"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        Submit project
+                    </button>
+                </form>
+            </div>
+
+
+            <div className="all-users">
+                <h1 className="text-2xl font-bold mb-4">All users who have logged in ... so far!</h1>
+                <ul className="list-disc pl-5">
+                    {users.map((user) => (
+                        <li key={user.id} className="mb-2">
+                            <a href={`https://github.com/${user.githubUsername}`}
+                                target="_blank" rel="noopener noreferrer"
+                                className={`text-blue-600 hover:underline ${user.githubId === currentUserId ? 'font-bold' : ''}`}
+                            >
+                                {user.githubUsername} (id: {user.githubId})
+                                {user.githubId == currentUserId && (
+                                    <span className="ml-1 text-gray-500">&lt;- This is you :)</span>
+                                )}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </main>
     );
 }

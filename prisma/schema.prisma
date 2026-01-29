@@ -13,12 +13,97 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  ADMIN
+  MENTOR
+  STUDENT
+}
+
 model User {
   id              BigInt   @id @default(autoincrement())
   email           String
   githubId        BigInt   @unique
   githubUsername  String
   name            String
+  lastLoginAt     DateTime @default(now())
+  role            UserRole @default(STUDENT)
 
-  createdAt       DateTime @default(now())
+  mentorProjects   Project[] @relation("MentorProjects")
+  studentProjects  Project[] @relation("StudentProjects")
+}
+
+model Project {
+  id        BigInt   @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  title     String
+  description    String
+  
+  repoOwner   String
+  repoName    String
+  issueNumber Int
+
+  // 0 = easy, 6 = medium, 12 = hard to allow for 
+  // future subdivisions if needed
+  difficulty Int
+
+  // TODO make this another table
+  technologies String[]
+
+  mentorId  BigInt
+  mentor    User     @relation("MentorProjects", fields: [mentorId], references: [id])
+  mentorAvailable Boolean @default(true)
+
+  studentId BigInt?
+  student   User?    @relation("StudentProjects", fields: [studentId], references: [id])
+
+  completedAt DateTime?
+}
+
+
+enum ProjectEventType {
+  CREATED
+  STUDENT_ASSIGNED
+  STUDENT_WITHDRAWN
+  MENTOR_MARKED_AVAILABLE
+  MENTOR_MARKED_UNAVAILABLE
+  COMPLETED
+}
+
+model ProjectEvent {
+  id        BigInt   @id @default(autoincrement())
+  type      ProjectEventType
+  time      DateTime @default(now())
+
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId BigInt
+
+  actor     User?   @relation(fields: [actorId], references: [id])
+  actorId   BigInt?
+}
+
+enum ProjectEventType {
+  CREATED
+  ASSIGNED
+  WITHDRAWN
+  COMPLETED
+  MENTOR_AVAILABLE
+  MENTOR_UNAVAILABLE
+}
+
+
+model Feedback {
+  // 0 = easier than expected; 1 = as expected; 2 = harder than expected
+  difficultyMatch Int
+
+  // did the project make you more confident in your skills?
+  improvedSkills Boolean
+
+  // feedback on the initial setup & onboarding process
+  feedbackPreCode String?
+
+  // feedback on writing the code (or documentation) itself
+  feedbackCode String?
+
+  // feedback on the PR review etc
+  feedbackPostCode String?
 }

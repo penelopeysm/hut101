@@ -24,10 +24,33 @@ const userData: Prisma.UserCreateInput[] = [
     },
 ];
 
+
 export async function main() {
     for (const u of userData) {
-        await prisma.user.create({ data: u });
+        await prisma.user.upsert({
+            where: { githubId: BigInt(u.githubId) },
+            update: {
+                name: u.name,
+                email: u.email,
+                githubUsername: u.githubUsername,
+            },
+            create: {
+                name: u.name,
+                email: u.email,
+                githubId: BigInt(u.githubId),
+                githubUsername: u.githubUsername,
+            },
+        });
     }
+    await prisma.project.create({
+        data: {
+            title: "My Title",
+            description: "My Description",
+            mentor: {
+                connect: { githubId: userData[0].githubId },
+            },
+        },
+    })
 }
 
 main();
