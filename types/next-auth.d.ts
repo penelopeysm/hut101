@@ -4,7 +4,7 @@ import { JWT } from "next-auth/jwt";
 declare module "next-auth" {
     interface Session {
         user: {
-            githubId: bigint
+            id: bigint,
         } & DefaultSession["user"]
     }
 
@@ -17,11 +17,14 @@ declare module "next-auth" {
         id: number,
         // github username
         login: string,
+        // profile picture
+        avatar_url: string,
     }
 }
 
 declare module "next-auth/jwt" {
     interface JWT {
-        githubId: number
+        id: number,
+        githubUserName: string,
     }
 }

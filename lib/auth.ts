@@ -20,40 +20,53 @@ export const nextAuthConfig = {
     })],
     callbacks: {
         async jwt({ token, user, profile }) {
-            console.log("JWT callback called");
-            console.log(token, user, profile);
+            // If it's a new login (i.e., someone clicked sign in with GitHub --
+            // not necessarily the first time, but any time they sign in), then
+            // we will have `user` and `profile`. We use that to update their
+            // details in our database.
             if (user && profile) {
-                const newToken: JWT = {
-                    ...token,
-                    githubId: profile.id,
-                    email: user.email,
-                    name: user.name,
-                    githubUsername: profile.login,
-                };
-                // Add to database here if new user
-                await prisma.user.upsert({
+                // Update the database
+                const prismaUser = await prisma.user.upsert({
                     where: { githubId: BigInt(profile.id) },
                     update: {
                         email: user.email!,
                         name: user.name!,
                         githubUsername: profile.login,
+                        githubPicture: profile.avatar_url,
+                        lastLoginAt: new Date(),
                     },
                     create: {
                         githubId: BigInt(profile.id),
                         email: user.email!,
                         name: user.name!,
                         githubUsername: profile.login,
+                        githubPicture: profile.avatar_url,
                     },
-                }).catch((err) => {
-                    console.error("Error upserting user in JWT callback:", err);
                 });
+                const newToken: JWT = {
+                    ...token,
+                    id: Number(prismaUser.id),
+                    githubUsername: prismaUser.githubUsername,
+                };
                 return newToken;
             } else {
+                // Returning user who's just opening the app while already being
+                // logged in. Just need to update their last seen date.
+                await prisma.user.update({
+                    where: { id: BigInt(token.id) },
+                    data: {
+                        lastLoginAt: new Date(),
+                    },
+                });
                 return token;
             }
         },
         async session({ session, token }) {
-            session.user.githubId = BigInt(token.githubId);
+            // Now we need to pass info from the token into the session.
+            session.user.id = token.id;
+            session.user.name = token.name;
+            session.user.githubUsername = token.githubUsername;
+            session.user.githubPicture = token.picture;
             return session
         }
     },

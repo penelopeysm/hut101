@@ -24,12 +24,14 @@ model User {
   email           String
   githubId        BigInt   @unique
   githubUsername  String
+  githubPicture   String
   name            String
   lastLoginAt     DateTime @default(now())
   role            UserRole @default(STUDENT)
 
   mentorProjects   Project[] @relation("MentorProjects")
   studentProjects  Project[] @relation("StudentProjects")
+  events           ProjectEvent[]
 }
 
 model Project {
@@ -46,8 +48,7 @@ model Project {
   // future subdivisions if needed
   difficulty Int
 
-  // TODO make this another table
-  technologies String[]
+  technologies ProjectTechnology[]
 
   mentorId  BigInt
   mentor    User     @relation("MentorProjects", fields: [mentorId], references: [id])
@@ -57,6 +58,24 @@ model Project {
   student   User?    @relation("StudentProjects", fields: [studentId], references: [id])
 
   completedAt DateTime?
+
+  events   ProjectEvent[]
+}
+
+model Technology {
+    id   BigInt @id @default(autoincrement())
+    name String @unique
+    projects ProjectTechnology[]
+}
+
+model ProjectTechnology {
+  projectId    BigInt
+  technologyId BigInt
+
+  project    Project    @relation(fields: [projectId], references: [id])
+  technology Technology @relation(fields: [technologyId], references: [id])
+
+  @@id([projectId, technologyId])
 }
 
 
@@ -77,21 +96,13 @@ model ProjectEvent {
   project   Project  @relation(fields: [projectId], references: [id])
   projectId BigInt
 
-  actor     User?   @relation(fields: [actorId], references: [id])
-  actorId   BigInt?
+  actor     User   @relation(fields: [actorId], references: [id])
+  actorId   BigInt
 }
-
-enum ProjectEventType {
-  CREATED
-  ASSIGNED
-  WITHDRAWN
-  COMPLETED
-  MENTOR_AVAILABLE
-  MENTOR_UNAVAILABLE
-}
-
 
 model Feedback {
+  id        BigInt   @id @default(autoincrement())
+
   // 0 = easier than expected; 1 = as expected; 2 = harder than expected
   difficultyMatch Int
 

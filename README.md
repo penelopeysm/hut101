@@ -2,7 +2,7 @@
 
 ## Development instructions
 
-Firstly, if you aren't Penny, ask her for the `.env` file so that you can get a connection string for the PostgreSQL database. Put that in the root of the project.
+Firstly, if you aren't Penny, ask her for the `.env.development` file so that you can get all the necessary environment locals. Put that in the root of the project.
 
 ```bash
 pnpm install                # Install dependencies
@@ -32,6 +32,9 @@ pnpm dev
 
 And open [`http://localhost:3000`](http://localhost:3000) in your browser.
 
+
 ## Production deployment
 
-I haven't yet figured out how to do all of this with Prisma yet.
+Deployment is currently on Vercel.
+The necessary environment variables are set up in the Vercel dashboard, and stored inside `.env.production` locally (but not committed to the repository).
+Again, ask Penny if you need these.
