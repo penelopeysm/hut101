@@ -157,7 +157,7 @@ export async function submitProjectAsMentor(
     }
     const mentorId = BigInt(session.user.id);
 
-    return await prisma.project.create({
+    const project = await prisma.project.create({
         data: {
             title,
             description,
@@ -170,4 +170,14 @@ export async function submitProjectAsMentor(
             },
         },
     });
+
+    await prisma.projectEvent.create({
+        data: {
+            type: "CREATED",
+            projectId: project.id,
+            actorId: mentorId,
+        },
+    });
+
+    return project;
 }
