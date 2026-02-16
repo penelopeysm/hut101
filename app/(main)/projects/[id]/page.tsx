@@ -9,18 +9,20 @@ import SignUpButton from "@/components/SignUpButton";
 
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
     const { id } = await params;
-    const { new: isNew } = await searchParams;
     let projectId: bigint;
     try {
         projectId = BigInt(id);
     } catch {
         notFound();
     }
-
     const project = await getProject(projectId);
     if (!project) {
         notFound();
     }
+
+    // flag indicating whether the project was just created, to show a success
+    // banner
+    const { new: isNew } = await searchParams;
 
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
@@ -47,7 +49,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     <span className="text-gray-500 w-20 shrink-0">Mentor</span>
                     <span>@{project.mentor.githubUsername}</span>
                     {!project.mentorAvailable && (
-                        <span className="text-yellow-600 text-xs">(unavailable)</span>
+                        <span className="text-yellow-600 text-xs">(currently unavailable)</span>
                     )}
                 </div>
 

@@ -1,5 +1,6 @@
 export default function Page() {
     return (
+        // The first h1 needs manual styling to match the headings on other pages
         <article className="prose max-w-2xl">
             <h1 className="text-2xl">About hut101</h1>
 
