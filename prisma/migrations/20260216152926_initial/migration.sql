@@ -1,21 +1,26 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Difficulty" AS ENUM ('EASY', 'MEDIUM', 'HARD');
 
-  - You are about to drop the column `createdAt` on the `User` table. All the data in the column will be lost.
-  - Added the required column `githubPicture` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'MENTOR', 'STUDENT');
 
 -- CreateEnum
 CREATE TYPE "ProjectEventType" AS ENUM ('CREATED', 'STUDENT_ASSIGNED', 'STUDENT_WITHDRAWN', 'MENTOR_MARKED_AVAILABLE', 'MENTOR_MARKED_UNAVAILABLE', 'COMPLETED');
 
--- AlterTable
-ALTER TABLE "User" DROP COLUMN "createdAt",
-ADD COLUMN     "githubPicture" TEXT NOT NULL,
-ADD COLUMN     "lastLoginAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "role" "UserRole" NOT NULL DEFAULT 'STUDENT';
+-- CreateTable
+CREATE TABLE "User" (
+    "id" BIGSERIAL NOT NULL,
+    "githubId" BIGINT NOT NULL,
+    "githubUsername" TEXT NOT NULL,
+    "githubPicture" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "contactEmail" TEXT,
+    "confirmedOver18" BOOLEAN NOT NULL DEFAULT false,
+    "lastLoginAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "role" "UserRole" NOT NULL DEFAULT 'STUDENT',
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Project" (
@@ -26,7 +31,7 @@ CREATE TABLE "Project" (
     "repoOwner" TEXT NOT NULL,
     "repoName" TEXT NOT NULL,
     "issueNumber" INTEGER NOT NULL,
-    "difficulty" INTEGER NOT NULL,
+    "difficulty" "Difficulty" NOT NULL,
     "mentorId" BIGINT NOT NULL,
     "mentorAvailable" BOOLEAN NOT NULL DEFAULT true,
     "studentId" BIGINT,
@@ -73,6 +78,9 @@ CREATE TABLE "Feedback" (
 
     CONSTRAINT "Feedback_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_githubId_key" ON "User"("githubId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Technology_name_key" ON "Technology"("name");
