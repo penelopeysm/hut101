@@ -28,7 +28,7 @@ export default async function Page() {
                     <div>
                         <span className="block text-sm text-gray-500 mb-1">Contact email</span>
                         <EditContactEmail currentEmail={session.user.contactEmail!} />
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                             This is not publicly viewable, but is shared with mentors and students you&rsquo;re matched with.
                         </p>
                     </div>
@@ -38,29 +38,29 @@ export default async function Page() {
                         {user?.confirmedOver18 ? (
                             <p className="text-sm">Confirmed over 18</p>
                         ) : (
-                            <p className="text-sm text-yellow-600">Not yet confirmed</p>
+                            <p className="text-sm text-yellow-600 dark:text-yellow-400">Not yet confirmed</p>
                         )}
                     </div>
                 </div>
             </section>
 
-            <section className="mb-10 pt-8 border-t border-gray-200">
+            <section className="mb-10 pt-8 border-t border-gray-200 dark:border-gray-800">
                 <h2 className="text-lg font-semibold mb-4">
                     Projects I&rsquo;m mentoring
                     <span className="text-gray-400 font-normal ml-2 text-sm">{mentoring.length}</span>
                 </h2>
 
                 {mentoring.length === 0 ? (
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
                         You haven&rsquo;t submitted any projects yet.{" "}
-                        <Link href="/submit" className="text-blue-600 hover:underline">Submit one?</Link>
+                        <Link href="/submit" className="text-blue-600 dark:text-blue-400 hover:underline">Submit one?</Link>
                     </p>
                 ) : (
                     <div className="grid gap-3">
                         {mentoring.map((project) => (
                             <div
                                 key={project.id.toString()}
-                                className="border border-gray-200 rounded-lg p-4 flex items-baseline justify-between gap-4"
+                                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-baseline justify-between gap-4"
                             >
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
@@ -80,7 +80,7 @@ export default async function Page() {
                                             <span>· No student yet</span>
                                         )}
                                         {project.completedAt && (
-                                            <span className="text-green-600">· Completed</span>
+                                            <span className="text-green-600 dark:text-green-400">· Completed</span>
                                         )}
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@ export default async function Page() {
                                     {project.studentId === null && !project.completedAt ? (
                                         <DeleteProjectButton projectId={project.id} />
                                     ) : (
-                                        <span className="text-xs text-gray-400">
+                                        <span className="text-xs text-gray-400 dark:text-gray-500">
                                             {project.completedAt ? "Completed" : "Has student"}
                                         </span>
                                     )}
@@ -100,23 +100,23 @@ export default async function Page() {
                 )}
             </section>
 
-            <section className="pt-8 border-t border-gray-200">
+            <section className="pt-8 border-t border-gray-200 dark:border-gray-800">
                 <h2 className="text-lg font-semibold mb-4">
                     Projects I&rsquo;m working on
                     <span className="text-gray-400 font-normal ml-2 text-sm">{studying.length}</span>
                 </h2>
 
                 {studying.length === 0 ? (
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
                         You haven&rsquo;t signed up for any projects yet.{" "}
-                        <Link href="/projects" className="text-blue-600 hover:underline">Browse projects?</Link>
+                        <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline">Browse projects?</Link>
                     </p>
                 ) : (
                     <div className="grid gap-3">
                         {studying.map((project) => (
                             <div
                                 key={project.id.toString()}
-                                className="border border-gray-200 rounded-lg p-4"
+                                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4"
                             >
                                 <div className="flex items-center gap-2 mb-1">
                                     <Link
@@ -127,11 +127,11 @@ export default async function Page() {
                                     </Link>
                                     <DifficultyBadge difficulty={project.difficulty} />
                                 </div>
-                                <div className="text-sm text-gray-500 flex flex-wrap gap-2">
+                                <div className="text-sm text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
                                     <span>Mentor: @{project.mentor.githubUsername}</span>
                                     <span>· {formatDateAsDaysInPast(project.createdAt)}</span>
                                     {project.completedAt && (
-                                        <span className="text-green-600">· Completed</span>
+                                        <span className="text-green-600 dark:text-green-400">· Completed</span>
                                     )}
                                 </div>
                             </div>

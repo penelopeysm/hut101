@@ -11,7 +11,7 @@ export default function SetupForm() {
     return (
         <form key={formKey} action={formAction} className="max-w-md space-y-5">
             {state?.error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-md px-4 py-3">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm rounded-md px-4 py-3">
                     {state.error}
                 </div>
             )}
@@ -27,7 +27,7 @@ export default function SetupForm() {
                     required
                     defaultValue={state?.fields?.contactEmail ?? ""}
                     placeholder="you@example.com"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                    className="w-full border border-gray-300 dark:border-gray-700 bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent"
                 />
             </div>
 
@@ -37,7 +37,7 @@ export default function SetupForm() {
                         type="checkbox"
                         name="confirmedOver18"
                         defaultChecked={state?.fields?.confirmedOver18 ?? false}
-                        className="mt-0.5 rounded border-gray-300"
+                        className="mt-0.5 rounded border-gray-300 dark:border-gray-700"
                     />
                     <span>I confirm that I am over 18 years old</span>
                 </label>
@@ -46,7 +46,7 @@ export default function SetupForm() {
             <button
                 type="submit"
                 disabled={isPending}
-                className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isPending ? "Saving..." : "Continue"}
             </button>

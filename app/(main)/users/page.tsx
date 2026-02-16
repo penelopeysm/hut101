@@ -18,7 +18,7 @@ export default async function Page() {
                 {users.map((user) => (
                     <div
                         key={user.id.toString()}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
                     >
                         <div>
                             <span className="font-medium">@{user.githubUsername}</span>

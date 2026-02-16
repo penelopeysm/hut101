@@ -16,31 +16,31 @@ interface TopMenuProps {
 export default function TopMenu({ user }: TopMenuProps) {
     console.log('topMenu user', user);
     return (
-        <nav className="flex justify-between items-center px-6 py-3 border-b border-gray-200 bg-white">
-            <div className="flex items-center gap-6">
+        <nav className="flex justify-between items-center px-4 sm:px-6 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+            <div className="flex items-center gap-4 sm:gap-6">
                 <Link href="/" className="font-bold text-lg tracking-tight">
                     hut101
                 </Link>
-                <div className="flex gap-4 text-sm">
-                    <Link href="/projects" className="text-gray-600 hover:text-gray-900 transition-colors">
+                <div className="flex gap-3 sm:gap-4 text-sm">
+                    <Link href="/projects" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                         Projects
                     </Link>
-                    <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
+                    <Link href="/about" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                         About
                     </Link>
                 </div>
             </div>
 
-            <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-3 sm:gap-4 text-sm">
                 {user ? (
                     <>
-                        <Link href="/submit" className="text-gray-600 hover:text-gray-900 transition-colors">
+                        <Link href="/submit" className="hidden sm:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                             Submit a Project
                         </Link>
-                        <Link href="/my-profile" className="text-gray-600 hover:text-gray-900 transition-colors">
+                        <Link href="/my-profile" className="hidden sm:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                             My Profile
                         </Link>
-                        <Link href="/api/auth/signout" className="text-gray-600 hover:text-gray-900 transition-colors">
+                        <Link href="/api/auth/signout" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                             Logout
                         </Link>
                         <Link href="/my-profile">
@@ -56,7 +56,7 @@ export default function TopMenu({ user }: TopMenuProps) {
                 ) : (
                     <Link
                         href="/api/auth/signin/github"
-                        className="bg-gray-900 text-white px-3 py-1.5 rounded-md text-sm hover:bg-gray-800 transition-colors"
+                        className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-1.5 rounded-md text-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
                     >
                         Login with GitHub
                     </Link>

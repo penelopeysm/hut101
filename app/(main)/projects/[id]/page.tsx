@@ -20,8 +20,6 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         notFound();
     }
 
-    // flag indicating whether the project was just created, to show a success
-    // banner
     const { new: isNew } = await searchParams;
 
     const session = await auth();
@@ -34,7 +32,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     return (
         <div className="max-w-2xl">
             {isNew && <SuccessBanner message="Project submitted successfully!" />}
-            <Link href="/projects" className="text-sm text-gray-500 hover:text-gray-700 transition-colors mb-4 inline-block">
+            <Link href="/projects" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mb-4 inline-block">
                 &larr; All projects
             </Link>
             <div className="flex items-baseline justify-between gap-4 mb-4">
@@ -42,14 +40,14 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 <DifficultyBadge difficulty={project.difficulty} />
             </div>
 
-            <p className="text-gray-600 mb-6">{project.description}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">{project.description}</p>
 
             <div className="space-y-3 mb-6">
                 <div className="flex gap-2 text-sm">
                     <span className="text-gray-500 w-20 shrink-0">Mentor</span>
                     <span>@{project.mentor.githubUsername}</span>
                     {!project.mentorAvailable && (
-                        <span className="text-yellow-600 text-xs">(currently unavailable)</span>
+                        <span className="text-yellow-600 dark:text-yellow-400 text-xs">(currently unavailable)</span>
                     )}
                 </div>
 
@@ -64,7 +62,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
 
                 <div className="flex gap-2 text-sm">
                     <span className="text-gray-500 w-20 shrink-0">Issue</span>
-                    <Link href={issueUrl} className="text-blue-600 hover:underline">
+                    <Link href={issueUrl} className="text-blue-600 dark:text-blue-400 hover:underline">
                         {project.repoOwner}/{project.repoName}#{project.issueNumber}
                     </Link>
                 </div>
@@ -77,7 +75,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 {project.completedAt && (
                     <div className="flex gap-2 text-sm">
                         <span className="text-gray-500 w-20 shrink-0">Status</span>
-                        <span className="text-green-600 font-medium">
+                        <span className="text-green-600 dark:text-green-400 font-medium">
                             Completed {project.completedAt.toLocaleDateString()}
                         </span>
                     </div>
@@ -95,7 +93,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     {project.technologies.map((pt) => (
                         <span
                             key={pt.technology.name}
-                            className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-xs font-medium"
+                            className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-xs font-medium"
                         >
                             {pt.technology.name}
                         </span>
@@ -110,8 +108,8 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     </h2>
                     <div className="space-y-2">
                         {project.events.map((event) => (
-                            <div key={event.id.toString()} className="flex gap-2 text-sm text-gray-600">
-                                <span className="text-gray-400 shrink-0">
+                            <div key={event.id.toString()} className="flex gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                <span className="text-gray-400 dark:text-gray-500 shrink-0">
                                     {event.time.toLocaleDateString()}
                                 </span>
                                 <span>
