@@ -37,10 +37,10 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             <Link href="/projects" className="text-sm text-gray-500 hover:text-gray-700 transition-colors mb-4 inline-block">
                 &larr; All projects
             </Link>
-            <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="text-2xl font-bold">{project.title}</h1>
                 <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 ${difficultyColor(project.difficulty)}`}
+                    className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 -translate-y-0.5 ${difficultyColor(project.difficulty)}`}
                 >
                     {difficultyLabel(project.difficulty)}
                 </span>

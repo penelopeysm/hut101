@@ -20,10 +20,10 @@ function ProjectCard({ project }: { project: Project }) {
             href={`/projects/${project.id}`}
             className="block border border-gray-200 rounded-lg p-5 hover:border-gray-400 transition-colors"
         >
-            <div className="flex items-start justify-between gap-4 mb-2">
+            <div className="flex items-baseline justify-between gap-4 mb-2">
                 <h2 className="text-lg font-semibold">{project.title}</h2>
                 <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 ${difficultyColor(project.difficulty)}`}
+                    className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 -translate-y-0.5 ${difficultyColor(project.difficulty)}`}
                 >
                     {difficultyLabel(project.difficulty)}
                 </span>
