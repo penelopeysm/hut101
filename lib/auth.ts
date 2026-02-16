@@ -29,7 +29,6 @@ export const nextAuthConfig = {
                 const prismaUser = await prisma.user.upsert({
                     where: { githubId: BigInt(profile.id) },
                     update: {
-                        email: user.email!,
                         name: user.name!,
                         githubUsername: profile.login,
                         githubPicture: profile.avatar_url,
@@ -37,7 +36,6 @@ export const nextAuthConfig = {
                     },
                     create: {
                         githubId: BigInt(profile.id),
-                        email: user.email!,
                         name: user.name!,
                         githubUsername: profile.login,
                         githubPicture: profile.avatar_url,
@@ -47,18 +45,24 @@ export const nextAuthConfig = {
                     ...token,
                     id: Number(prismaUser.id),
                     githubUsername: prismaUser.githubUsername,
+                    contactEmail: prismaUser.contactEmail,
+                    role: prismaUser.role,
                 };
                 return newToken;
             } else {
                 // Returning user who's just opening the app while already being
                 // logged in. Just need to update their last seen date.
-                await prisma.user.update({
+                const prismaUser = await prisma.user.update({
                     where: { id: BigInt(token.id) },
                     data: {
                         lastLoginAt: new Date(),
                     },
                 });
-                return token;
+                return {
+                    ...token,
+                    contactEmail: prismaUser.contactEmail,
+                    role: prismaUser.role,
+                };
             }
         },
         async session({ session, token }) {
@@ -67,6 +71,8 @@ export const nextAuthConfig = {
             session.user.name = token.name;
             session.user.githubUsername = token.githubUsername;
             session.user.githubPicture = token.picture;
+            session.user.contactEmail = token.contactEmail;
+            session.user.role = token.role;
             return session
         }
     },

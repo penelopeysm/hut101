@@ -13,6 +13,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 enum UserRole {
   ADMIN
   MENTOR
@@ -21,11 +27,12 @@ enum UserRole {
 
 model User {
   id              BigInt   @id @default(autoincrement())
-  email           String
   githubId        BigInt   @unique
   githubUsername  String
   githubPicture   String
   name            String
+  contactEmail    String?
+  confirmedOver18 Boolean  @default(false)
   lastLoginAt     DateTime @default(now())
   role            UserRole @default(STUDENT)
 
@@ -44,9 +51,7 @@ model Project {
   repoName    String
   issueNumber Int
 
-  // 0 = easy, 6 = medium, 12 = hard to allow for 
-  // future subdivisions if needed
-  difficulty Int
+  difficulty Difficulty
 
   technologies ProjectTechnology[]
 
