@@ -25,9 +25,6 @@ export default function TopMenu({ user }: TopMenuProps) {
                     <Link href="/projects" className="text-gray-600 hover:text-gray-900 transition-colors">
                         Projects
                     </Link>
-                    <Link href="/users" className="text-gray-600 hover:text-gray-900 transition-colors">
-                        Users
-                    </Link>
                     <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
                         About
                     </Link>

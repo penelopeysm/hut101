@@ -1,7 +1,14 @@
 import { getUsers } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { formatDateAsDaysInPast } from "@/lib/utils";
+import { notFound } from "next/navigation";
 
 export default async function Page() {
+    const session = await auth();
+    if (session?.user.role !== "ADMIN") {
+        notFound();
+    }
+
     const users = await getUsers();
     console.log(users);
     return (

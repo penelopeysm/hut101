@@ -8,6 +8,7 @@ declare module "next-auth" {
             githubUsername: string,
             githubPicture: string,
             contactEmail: string | null,
+            role: string,
         } & DefaultSession["user"]
     }
 
@@ -30,5 +31,6 @@ declare module "next-auth/jwt" {
         id: number,
         githubUsername: string,
         contactEmail: string | null,
+        role: string,
     }
 }

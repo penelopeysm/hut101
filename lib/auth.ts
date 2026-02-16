@@ -46,6 +46,7 @@ export const nextAuthConfig = {
                     id: Number(prismaUser.id),
                     githubUsername: prismaUser.githubUsername,
                     contactEmail: prismaUser.contactEmail,
+                    role: prismaUser.role,
                 };
                 return newToken;
             } else {
@@ -60,6 +61,7 @@ export const nextAuthConfig = {
                 return {
                     ...token,
                     contactEmail: prismaUser.contactEmail,
+                    role: prismaUser.role,
                 };
             }
         },
@@ -70,6 +72,7 @@ export const nextAuthConfig = {
             session.user.githubUsername = token.githubUsername;
             session.user.githubPicture = token.picture;
             session.user.contactEmail = token.contactEmail;
+            session.user.role = token.role;
             return session
         }
     },
