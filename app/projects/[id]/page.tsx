@@ -1,9 +1,11 @@
 import { getProject } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { formatDateAsDaysInPast } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SuccessBanner from "@/components/SuccessBanner";
 import DifficultyBadge from "@/components/DifficultyBadge";
+import SignUpButton from "@/components/SignUpButton";
 
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
     const { id } = await params;
@@ -19,6 +21,11 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     if (!project) {
         notFound();
     }
+
+    const session = await auth();
+    const userId = session ? BigInt(session.user.id) : null;
+    const isOpen = !project.studentId && !project.completedAt && project.mentorAvailable;
+    const canSignUp = isOpen && userId !== null && userId !== project.mentorId;
 
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
 
@@ -74,6 +81,12 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     </div>
                 )}
             </div>
+
+            {canSignUp && (
+                <div className="mb-8">
+                    <SignUpButton projectId={project.id} />
+                </div>
+            )}
 
             {project.technologies.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 mb-8">

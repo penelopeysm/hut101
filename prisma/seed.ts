@@ -49,7 +49,7 @@ export async function main() {
             title: "Improve terminal output for MCMC sampling results",
             description: "I would write more here but it doesn't really make sense to do so in seed data",
             mentor: {
-                connect: { githubId: BigInt(122629585) }, // that's Penny
+                connect: { githubId: BigInt(72076688), }
             },
             repoOwner: "penelopeysm",
             repoName: "FlexiChains.jl",
