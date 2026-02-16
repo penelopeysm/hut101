@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateContactEmail } from "@/app/my-projects/actions";
+import { updateContactEmail } from "@/app/(main)/my-profile/actions";
 
 export default function EditContactEmail({ currentEmail }: { currentEmail: string }) {
     const [editing, setEditing] = useState(false);

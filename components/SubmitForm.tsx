@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitProject, type SubmitResult } from "@/app/submit/actions";
+import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
 
 export default function SubmitForm() {
     const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);

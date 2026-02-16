@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { deleteProjectAction } from "@/app/my-projects/actions";
+import { deleteProjectAction } from "@/app/(main)/my-profile/actions";
 
 export default function DeleteProjectButton({ projectId }: { projectId: bigint }) {
     const [confirming, setConfirming] = useState(false);

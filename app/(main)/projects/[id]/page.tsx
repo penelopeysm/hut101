@@ -1,5 +1,6 @@
 import { getProject } from "@/lib/db";
-import { formatDateAsDaysInPast, requireSetup } from "@/lib/utils";
+import { formatDateAsDaysInPast } from "@/lib/utils";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SuccessBanner from "@/components/SuccessBanner";
@@ -21,7 +22,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         notFound();
     }
 
-    const session = await requireSetup();
+    const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
     const isOpen = !project.studentId && !project.completedAt && project.mentorAvailable;
     const canSignUp = isOpen && userId !== null && userId !== project.mentorId;

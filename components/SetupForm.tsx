@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { setContactEmail, type SetupResult } from "@/app/setup/actions";
+import { setContactEmail, type SetupResult } from "@/app/(setup)/setup/actions";
 
 export default function SetupForm() {
     const [state, formAction, isPending] = useActionState<SetupResult | null, FormData>(setContactEmail, null);

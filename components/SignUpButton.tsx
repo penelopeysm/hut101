@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { signUpAction } from "@/app/projects/[id]/actions";
+import { signUpAction } from "@/app/(main)/projects/[id]/actions";
 
 export default function SignUpButton({ projectId }: { projectId: bigint }) {
     const [confirming, setConfirming] = useState(false);

@@ -37,8 +37,8 @@ export default function TopMenu({ user }: TopMenuProps) {
                         <Link href="/submit" className="text-gray-600 hover:text-gray-900 transition-colors">
                             Submit a Project
                         </Link>
-                        <Link href="/my-projects" className="text-gray-600 hover:text-gray-900 transition-colors">
-                            My Projects
+                        <Link href="/my-profile" className="text-gray-600 hover:text-gray-900 transition-colors">
+                            My Profile
                         </Link>
                         <Link href="/api/auth/signout" className="text-gray-600 hover:text-gray-900 transition-colors">
                             Logout

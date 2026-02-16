@@ -1,13 +1,14 @@
 import { getMyProjects } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { formatDateAsDaysInPast, requireSetup } from "@/lib/utils";
+import { formatDateAsDaysInPast } from "@/lib/utils";
 import DeleteProjectButton from "@/components/DeleteProjectButton";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import EditContactEmail from "@/components/EditContactEmail";
 
 export default async function Page() {
-    const session = await requireSetup();
+    const session = await auth();
     if (!session) {
         redirect("/api/auth/signin/github");
     }
@@ -16,7 +17,15 @@ export default async function Page() {
 
     return (
         <>
-            <h1 className="text-2xl font-bold mb-6">My Projects</h1>
+            <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+
+            <section className="mb-10">
+                <h2 className="text-lg font-semibold mb-3">Contact email</h2>
+                <p className="text-sm text-gray-500 mb-3">
+                    This is shared with mentors and students you&rsquo;re matched with on a project.
+                </p>
+                <EditContactEmail currentEmail={session.user.contactEmail!} />
+            </section>
 
             <section className="mb-10">
                 <h2 className="text-lg font-semibold mb-4">
@@ -112,14 +121,6 @@ export default async function Page() {
                         ))}
                     </div>
                 )}
-            </section>
-
-            <section className="mt-10 pt-8 border-t border-gray-200">
-                <h2 className="text-lg font-semibold mb-3">Contact email</h2>
-                <p className="text-sm text-gray-500 mb-3">
-                    This is shared with mentors and students you&rsquo;re matched with on a project.
-                </p>
-                <EditContactEmail currentEmail={session.user.contactEmail!} />
             </section>
         </>
     );

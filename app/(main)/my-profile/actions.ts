@@ -13,7 +13,7 @@ export async function deleteProjectAction(projectId: bigint): Promise<{ error?: 
         return { error: message };
     }
 
-    revalidatePath("/my-projects");
+    revalidatePath("/my-profile");
     return {};
 }
 
@@ -41,6 +41,6 @@ export async function updateContactEmail(email: string): Promise<{ error?: strin
         return { error: "Something went wrong. Please try again." };
     }
 
-    revalidatePath("/my-projects");
+    revalidatePath("/my-profile");
     return {};
 }
