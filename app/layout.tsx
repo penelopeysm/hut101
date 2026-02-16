@@ -39,7 +39,7 @@ export default async function RootLayout({
                 className={`${fontSans.variable} ${fontMono.variable} antialiased`}
             >
                 <TopMenu user={topMenuProps} />
-                <main className="p-4 ml-4 mr-4">
+                <main className="max-w-4xl mx-auto px-6 py-8">
                     {children}
                 </main>
             </body>

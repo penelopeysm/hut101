@@ -1,33 +1,27 @@
 import { getUsers } from "@/lib/db";
-
-function formatLastSeen(lastSeen: Date) {
-    const now = new Date();
-    // just measure by days
-    const lastSeenDay = new Date(lastSeen.getFullYear(), lastSeen.getMonth(), lastSeen.getDate());
-    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    console.log("lastSeenDay", lastSeenDay);
-    console.log("nowDay", nowDay);
-    if (lastSeenDay > nowDay) {
-        return "in the future (timey wimey stuff going on here...)";
-    } else if (lastSeenDay.getTime() === nowDay.getTime()) {
-        return "today";
-    } else {
-        return "in the past";
-    }
-}
+import { formatDateAsDaysInPast } from "@/lib/utils";
 
 export default async function Page() {
     const users = await getUsers();
     console.log(users);
     return (
         <>
-            <h1 className="text-2xl font-bold mb-4">Users</h1>
-            <ul className="list-disc list-inside">
+            <h1 className="text-2xl font-bold mb-6">Users</h1>
+            <div className="grid gap-3">
                 {users.map((user) => (
-                    <li key={user.id}>{user.githubUsername} (last seen {formatLastSeen(user.lastLoginAt)})</li>
+                    <div
+                        key={user.id.toString()}
+                        className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+                    >
+                        <div>
+                            <span className="font-medium">@{user.githubUsername}</span>
+                            <span className="text-sm text-gray-500 ml-2">
+                                last seen {formatDateAsDaysInPast(user.lastLoginAt)}
+                            </span>
+                        </div>
+                    </div>
                 ))}
-            </ul>
+            </div>
         </>
-    )
+    );
 }

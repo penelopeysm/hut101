@@ -7,7 +7,6 @@ async function submitProject(formData: FormData) {
     const githubIssueLink = formData.get("githubIssue") as string;
     const difficulty = parseInt(formData.get("difficulty") as string);
 
-    // extract repoOwner, repoName and issueNumber from githubIssueLink
     const match =
         githubIssueLink.match(/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/);
     if (!match) {
@@ -29,46 +28,59 @@ async function submitProject(formData: FormData) {
     });
 }
 
-export default async function Home() {
+export default async function Page() {
     return (
         <>
-            <h1 className="text-2xl font-bold mb-4">Submit a new project</h1>
+            <h1 className="text-2xl font-bold mb-6">Submit a new project</h1>
 
-            <form action={submitProject} className="space-y-4">
+            <form action={submitProject} className="max-w-lg space-y-5">
                 <div>
-                    <label className="block text-sm font-medium">Title</label>
+                    <label htmlFor="title" className="block text-sm font-medium mb-1">
+                        Title
+                    </label>
                     <input
+                        id="title"
                         name="title"
                         required
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium">Description</label>
+                    <label htmlFor="description" className="block text-sm font-medium mb-1">
+                        Description
+                    </label>
                     <textarea
+                        id="description"
                         name="description"
                         required
-                        className="w-full border rounded px-3 py-2"
+                        rows={4}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium">Original GitHub issue link</label>
+                    <label htmlFor="githubIssue" className="block text-sm font-medium mb-1">
+                        GitHub issue link
+                    </label>
                     <input
+                        id="githubIssue"
                         name="githubIssue"
                         required
-                        className="w-full border rounded px-3 py-2"
+                        placeholder="https://github.com/owner/repo/issues/123"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     />
                 </div>
 
                 <div>
-                    <label className="block text-sm
-                        font-medium">Difficulty</label>
+                    <label htmlFor="difficulty" className="block text-sm font-medium mb-1">
+                        Difficulty
+                    </label>
                     <select
+                        id="difficulty"
                         name="difficulty"
                         required
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                     >
                         <option value="">Select difficulty</option>
                         <option value="0">Easy</option>
@@ -79,7 +91,7 @@ export default async function Home() {
 
                 <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
                 >
                     Submit project
                 </button>
