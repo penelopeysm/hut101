@@ -46,13 +46,15 @@ export default function TopMenu({ user }: TopMenuProps) {
                         <Link href="/api/auth/signout" className="text-gray-600 hover:text-gray-900 transition-colors">
                             Logout
                         </Link>
-                        <Image
-                            src={user.githubPicture}
-                            alt={`${user.githubUsername}'s avatar`}
-                            width={28}
-                            height={28}
-                            className="rounded-full"
-                        />
+                        <Link href="/my-profile">
+                            <Image
+                                src={user.githubPicture}
+                                alt={`${user.githubUsername}'s avatar`}
+                                width={28}
+                                height={28}
+                                className="rounded-full"
+                            />
+                        </Link>
                     </>
                 ) : (
                     <Link
