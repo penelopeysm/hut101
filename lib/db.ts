@@ -37,20 +37,66 @@ export async function getProject(id: bigint) {
     });
 }
 
-export async function getProjectsWithMentor(mentorId: bigint) {
-    return await prisma.project.findMany({
-        where: {
-            mentorId: mentorId,
-        },
-    });
+export async function getMyProjects() {
+    const session = await auth();
+    if (!session) {
+        return { mentoring: [], studying: [] };
+    }
+    const userId = BigInt(session.user.id);
+
+    const [mentoring, studying] = await Promise.all([
+        prisma.project.findMany({
+            where: { mentorId: userId },
+            include: {
+                student: true,
+                technologies: {
+                    include: { technology: true },
+                },
+            },
+            orderBy: { createdAt: "desc" },
+        }),
+        prisma.project.findMany({
+            where: { studentId: userId },
+            include: {
+                mentor: true,
+                technologies: {
+                    include: { technology: true },
+                },
+            },
+            orderBy: { createdAt: "desc" },
+        }),
+    ]);
+
+    return { mentoring, studying };
 }
 
-export async function getProjectsWithStudent(studentId: bigint) {
-    return await prisma.project.findMany({
-        where: {
-            studentId: studentId,
-        },
+export async function deleteProject(projectId: bigint) {
+    const session = await auth();
+    if (!session) {
+        throw new Error("Not authenticated");
+    }
+    const userId = BigInt(session.user.id);
+
+    const project = await prisma.project.findUnique({
+        where: { id: projectId },
     });
+
+    if (!project) {
+        throw new Error("Project not found");
+    }
+    if (project.mentorId !== userId) {
+        throw new Error("You can only delete your own projects");
+    }
+    if (project.studentId !== null) {
+        throw new Error("Cannot delete a project that has a student assigned");
+    }
+
+    // Delete related records first, then the project
+    await prisma.$transaction([
+        prisma.projectTechnology.deleteMany({ where: { projectId } }),
+        prisma.projectEvent.deleteMany({ where: { projectId } }),
+        prisma.project.delete({ where: { id: projectId } }),
+    ]);
 }
 
 export async function submitProjectAsMentor(
@@ -62,14 +108,12 @@ export async function submitProjectAsMentor(
     difficulty: number,
     // TODO: technologies
 ) {
-    // read the user's id from the session and use it as the mentorId
     const session = await auth();
     if (!session) {
         throw new Error("Not authenticated");
     }
     const mentorId = BigInt(session.user.id);
 
-    // todo error checking
     return await prisma.project.create({
         data: {
             title,
@@ -84,5 +128,3 @@ export async function submitProjectAsMentor(
         },
     });
 }
-
-
