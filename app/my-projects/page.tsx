@@ -43,7 +43,7 @@ export default async function Page() {
                         {mentoring.map((project) => (
                             <div
                                 key={project.id.toString()}
-                                className="border border-gray-200 rounded-lg p-4 flex items-start justify-between gap-4"
+                                className="border border-gray-200 rounded-lg p-4 flex items-baseline justify-between gap-4"
                             >
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-2 mb-1">

@@ -34,6 +34,9 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     return (
         <div className="max-w-2xl">
             {isNew && <SuccessBanner message="Project submitted successfully!" />}
+            <Link href="/projects" className="text-sm text-gray-500 hover:text-gray-700 transition-colors mb-4 inline-block">
+                &larr; All projects
+            </Link>
             <div className="flex items-start justify-between gap-4 mb-4">
                 <h1 className="text-2xl font-bold">{project.title}</h1>
                 <span

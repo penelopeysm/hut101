@@ -10,7 +10,7 @@ export default function DeleteProjectButton({ projectId }: { projectId: bigint }
 
     if (confirming) {
         return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-baseline gap-2">
                 <span className="text-sm text-gray-600">Are you sure?</span>
                 <button
                     disabled={isPending}
