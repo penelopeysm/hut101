@@ -27,11 +27,11 @@ enum UserRole {
 
 model User {
   id              BigInt   @id @default(autoincrement())
-  email           String
   githubId        BigInt   @unique
   githubUsername  String
   githubPicture   String
   name            String
+  contactEmail    String?
   lastLoginAt     DateTime @default(now())
   role            UserRole @default(STUDENT)
 

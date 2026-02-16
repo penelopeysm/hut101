@@ -1,3 +1,19 @@
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+
+/**
+ * Call this at the top of any page that requires the user to have
+ * completed setup (i.e. provided a contact email). If they're logged
+ * in but haven't set one, they'll be redirected to /setup.
+ */
+export async function requireSetup() {
+    const session = await auth();
+    if (session && !session.user.contactEmail) {
+        redirect("/setup");
+    }
+    return session;
+}
+
 export function formatDateAsDaysInPast(date: Date) {
     const now = new Date();
     const lastSeenDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
