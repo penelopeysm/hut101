@@ -16,7 +16,10 @@ const difficultyColor = (d: number) =>
 
 function ProjectCard({ project }: { project: Project }) {
     return (
-        <div className="border border-gray-200 rounded-lg p-5 hover:border-gray-400 transition-colors">
+        <Link
+            href={`/projects/${project.id}`}
+            className="block border border-gray-200 rounded-lg p-5 hover:border-gray-400 transition-colors"
+        >
             <div className="flex items-start justify-between gap-4 mb-2">
                 <h2 className="text-lg font-semibold">{project.title}</h2>
                 <span
@@ -33,12 +36,9 @@ function ProjectCard({ project }: { project: Project }) {
                 <span className="text-gray-300">·</span>
                 <span>{formatDateAsDaysInPast(project.createdAt)}</span>
                 <span className="text-gray-300">·</span>
-                <Link
-                    href={`https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`}
-                    className="text-blue-600 hover:underline"
-                >
+                <span className="text-blue-600">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
-                </Link>
+                </span>
             </div>
 
             {project.technologies.length > 0 && (
@@ -59,7 +59,7 @@ function ProjectCard({ project }: { project: Project }) {
                     ✅ Completed {project.completedAt.toLocaleDateString()}
                 </p>
             )}
-        </div>
+        </Link>
     );
 }
 

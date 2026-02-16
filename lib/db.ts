@@ -18,6 +18,25 @@ export async function getProjects() {
     });
 }
 
+export async function getProject(id: bigint) {
+    return await prisma.project.findUnique({
+        where: { id },
+        include: {
+            mentor: true,
+            student: true,
+            technologies: {
+                include: {
+                    technology: true,
+                },
+            },
+            events: {
+                include: { actor: true },
+                orderBy: { time: "desc" },
+            },
+        },
+    });
+}
+
 export async function getProjectsWithMentor(mentorId: bigint) {
     return await prisma.project.findMany({
         where: {

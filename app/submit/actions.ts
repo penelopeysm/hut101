@@ -30,8 +30,9 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
     const [, repoOwner, repoName, issueNumberStr] = match;
     const issueNumber = parseInt(issueNumberStr);
 
+    let project;
     try {
-        await submitProjectAsMentor(
+        project = await submitProjectAsMentor(
             title,
             description,
             repoOwner,
@@ -44,5 +45,5 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
         return { success: false, error: "Something went wrong while submitting. Please try again.", fields };
     }
 
-    redirect("/projects");
+    redirect(`/projects/${project.id}`);
 }
