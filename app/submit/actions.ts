@@ -45,5 +45,5 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
         return { success: false, error: "Something went wrong while submitting. Please try again.", fields };
     }
 
-    redirect(`/projects/${project.id}`);
+    redirect(`/projects/${project.id}?new=1`);
 }

@@ -2,6 +2,7 @@ import { getProject } from "@/lib/db";
 import { formatDateAsDaysInPast } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import SuccessBanner from "@/components/SuccessBanner";
 
 const difficultyLabel = (d: number) =>
     d <= 0 ? "Easy" : d <= 6 ? "Medium" : "Hard";
@@ -13,8 +14,9 @@ const difficultyColor = (d: number) =>
             ? "bg-yellow-100 text-yellow-800"
             : "bg-red-100 text-red-800";
 
-export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
     const { id } = await params;
+    const { new: isNew } = await searchParams;
     let projectId: bigint;
     try {
         projectId = BigInt(id);
@@ -31,6 +33,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     return (
         <div className="max-w-2xl">
+            {isNew && <SuccessBanner message="Project submitted successfully!" />}
             <div className="flex items-start justify-between gap-4 mb-4">
                 <h1 className="text-2xl font-bold">{project.title}</h1>
                 <span
