@@ -1,4 +1,4 @@
-import { getMyProjects } from "@/lib/db";
+import { getMyProjects, getUser } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -13,21 +13,38 @@ export default async function Page() {
         redirect("/api/auth/signin/github");
     }
 
-    const { mentoring, studying } = await getMyProjects();
+    const [{ mentoring, studying }, user] = await Promise.all([
+        getMyProjects(),
+        getUser(BigInt(session.user.id)),
+    ]);
 
     return (
         <>
             <h1 className="text-2xl font-bold mb-6">My Profile</h1>
 
             <section className="mb-10">
-                <h2 className="text-lg font-semibold mb-3">Contact email</h2>
-                <p className="text-sm text-gray-500 mb-3">
-                    This is shared with mentors and students you&rsquo;re matched with on a project.
-                </p>
-                <EditContactEmail currentEmail={session.user.contactEmail!} />
+                <h2 className="text-lg font-semibold mb-4">Personal details</h2>
+                <div className="space-y-4">
+                    <div>
+                        <span className="block text-sm text-gray-500 mb-1">Contact email</span>
+                        <EditContactEmail currentEmail={session.user.contactEmail!} />
+                        <p className="text-xs text-gray-400 mt-1">
+                            This is not publicly viewable, but is shared with mentors and students you&rsquo;re matched with.
+                        </p>
+                    </div>
+
+                    <div>
+                        <span className="block text-sm text-gray-500 mb-1">Age verification</span>
+                        {user?.confirmedOver18 ? (
+                            <p className="text-sm">Confirmed over 18</p>
+                        ) : (
+                            <p className="text-sm text-yellow-600">Not yet confirmed</p>
+                        )}
+                    </div>
+                </div>
             </section>
 
-            <section className="mb-10">
+            <section className="mb-10 pt-8 border-t border-gray-200">
                 <h2 className="text-lg font-semibold mb-4">
                     Projects I&rsquo;m mentoring
                     <span className="text-gray-400 font-normal ml-2 text-sm">{mentoring.length}</span>
@@ -83,7 +100,7 @@ export default async function Page() {
                 )}
             </section>
 
-            <section>
+            <section className="pt-8 border-t border-gray-200">
                 <h2 className="text-lg font-semibold mb-4">
                     Projects I&rsquo;m working on
                     <span className="text-gray-400 font-normal ml-2 text-sm">{studying.length}</span>

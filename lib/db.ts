@@ -38,6 +38,12 @@ export async function getProject(id: bigint) {
     });
 }
 
+export async function getUser(id: bigint) {
+    return await prisma.user.findUnique({
+        where: { id },
+    });
+}
+
 export async function getMyProjects() {
     const session = await auth();
     if (!session) {

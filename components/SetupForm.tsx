@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { setContactEmail, type SetupResult } from "@/app/(setup)/setup/actions";
+import { setupAccount, type SetupResult } from "@/app/(setup)/setup/actions";
 
 export default function SetupForm() {
-    const [state, formAction, isPending] = useActionState<SetupResult | null, FormData>(setContactEmail, null);
+    const [state, formAction, isPending] = useActionState<SetupResult | null, FormData>(setupAccount, null);
 
     const formKey = state?.error ? JSON.stringify(state.fields) : "initial";
 
@@ -29,6 +29,18 @@ export default function SetupForm() {
                     placeholder="you@example.com"
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 />
+            </div>
+
+            <div>
+                <label className="flex items-start gap-2 text-sm">
+                    <input
+                        type="checkbox"
+                        name="confirmedOver18"
+                        defaultChecked={state?.fields?.confirmedOver18 ?? false}
+                        className="mt-0.5 rounded border-gray-300"
+                    />
+                    <span>I confirm that I am over 18 years old</span>
+                </label>
             </div>
 
             <button

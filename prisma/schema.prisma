@@ -32,6 +32,7 @@ model User {
   githubPicture   String
   name            String
   contactEmail    String?
+  confirmedOver18 Boolean  @default(false)
   lastLoginAt     DateTime @default(now())
   role            UserRole @default(STUDENT)
 
