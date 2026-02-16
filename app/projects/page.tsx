@@ -1,18 +1,9 @@
 import { getProjects } from "@/lib/db";
 import Link from "next/link";
 import { formatDateAsDaysInPast } from "@/lib/utils";
+import DifficultyBadge from "@/components/DifficultyBadge";
 
 type Project = Awaited<ReturnType<typeof getProjects>>[number];
-
-const difficultyLabel = (d: number) =>
-    d <= 0 ? "Easy" : d <= 6 ? "Medium" : "Hard";
-
-const difficultyColor = (d: number) =>
-    d <= 0
-        ? "bg-green-100 text-green-800"
-        : d <= 6
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-red-100 text-red-800";
 
 function ProjectCard({ project }: { project: Project }) {
     return (
@@ -22,11 +13,7 @@ function ProjectCard({ project }: { project: Project }) {
         >
             <div className="flex items-baseline justify-between gap-4 mb-2">
                 <h2 className="text-lg font-semibold">{project.title}</h2>
-                <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 -translate-y-0.5 ${difficultyColor(project.difficulty)}`}
-                >
-                    {difficultyLabel(project.difficulty)}
-                </span>
+                <DifficultyBadge difficulty={project.difficulty} />
             </div>
 
             <p className="text-gray-600 mb-4">{project.description}</p>

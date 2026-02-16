@@ -71,9 +71,9 @@ export default function SubmitForm() {
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 >
                     <option value="">Select difficulty</option>
-                    <option value="0">Easy</option>
-                    <option value="6">Medium</option>
-                    <option value="12">Hard</option>
+                    <option value="EASY">Easy</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="HARD">Hard</option>
                 </select>
             </div>
 

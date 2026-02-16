@@ -13,6 +13,12 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 enum UserRole {
   ADMIN
   MENTOR
@@ -44,9 +50,7 @@ model Project {
   repoName    String
   issueNumber Int
 
-  // 0 = easy, 6 = medium, 12 = hard to allow for 
-  // future subdivisions if needed
-  difficulty Int
+  difficulty Difficulty
 
   technologies ProjectTechnology[]
 

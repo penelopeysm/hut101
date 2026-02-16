@@ -3,16 +3,7 @@ import { formatDateAsDaysInPast } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SuccessBanner from "@/components/SuccessBanner";
-
-const difficultyLabel = (d: number) =>
-    d <= 0 ? "Easy" : d <= 6 ? "Medium" : "Hard";
-
-const difficultyColor = (d: number) =>
-    d <= 0
-        ? "bg-green-100 text-green-800"
-        : d <= 6
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-red-100 text-red-800";
+import DifficultyBadge from "@/components/DifficultyBadge";
 
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
     const { id } = await params;
@@ -39,11 +30,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             </Link>
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="text-2xl font-bold">{project.title}</h1>
-                <span
-                    className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 -translate-y-0.5 ${difficultyColor(project.difficulty)}`}
-                >
-                    {difficultyLabel(project.difficulty)}
-                </span>
+                <DifficultyBadge difficulty={project.difficulty} />
             </div>
 
             <p className="text-gray-600 mb-6">{project.description}</p>

@@ -1,6 +1,5 @@
 export function formatDateAsDaysInPast(date: Date) {
     const now = new Date();
-    // just measure by days
     const lastSeenDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 

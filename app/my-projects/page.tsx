@@ -4,16 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatDateAsDaysInPast } from "@/lib/utils";
 import DeleteProjectButton from "@/components/DeleteProjectButton";
-
-const difficultyLabel = (d: number) =>
-    d <= 0 ? "Easy" : d <= 6 ? "Medium" : "Hard";
-
-const difficultyColor = (d: number) =>
-    d <= 0
-        ? "bg-green-100 text-green-800"
-        : d <= 6
-            ? "bg-yellow-100 text-yellow-800"
-            : "bg-red-100 text-red-800";
+import DifficultyBadge from "@/components/DifficultyBadge";
 
 export default async function Page() {
     const session = await auth();
@@ -53,11 +44,7 @@ export default async function Page() {
                                         >
                                             {project.title}
                                         </Link>
-                                        <span
-                                            className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${difficultyColor(project.difficulty)}`}
-                                        >
-                                            {difficultyLabel(project.difficulty)}
-                                        </span>
+                                        <DifficultyBadge difficulty={project.difficulty} />
                                     </div>
                                     <div className="text-sm text-gray-500 flex flex-wrap gap-2">
                                         <span>{formatDateAsDaysInPast(project.createdAt)}</span>
@@ -112,11 +99,7 @@ export default async function Page() {
                                     >
                                         {project.title}
                                     </Link>
-                                    <span
-                                        className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${difficultyColor(project.difficulty)}`}
-                                    >
-                                        {difficultyLabel(project.difficulty)}
-                                    </span>
+                                    <DifficultyBadge difficulty={project.difficulty} />
                                 </div>
                                 <div className="text-sm text-gray-500 flex flex-wrap gap-2">
                                     <span>Mentor: @{project.mentor.githubUsername}</span>

@@ -2,6 +2,7 @@
 
 import { submitProjectAsMentor } from "@/lib/db";
 import { redirect } from "next/navigation";
+import type { Difficulty } from "@/lib/generated/client";
 
 export type SubmitResult = {
     success: boolean;
@@ -38,7 +39,7 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
             repoOwner,
             repoName,
             issueNumber,
-            parseInt(difficulty),
+            difficulty as Difficulty,
         );
     } catch (err) {
         console.error("Error submitting project:", err);

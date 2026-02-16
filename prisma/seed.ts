@@ -54,7 +54,7 @@ export async function main() {
             repoOwner: "penelopeysm",
             repoName: "FlexiChains.jl",
             issueNumber: 95,
-            difficulty: 6,
+            difficulty: "MEDIUM",
 
             technologies: {
                 create: [

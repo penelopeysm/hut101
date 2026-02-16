@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import type { Difficulty } from "@/lib/generated/client";
 
 export async function getUsers() {
     return await prisma.user.findMany();
@@ -105,7 +106,7 @@ export async function submitProjectAsMentor(
     repoOwner: string,
     repoName: string,
     issueNumber: number,
-    difficulty: number,
+    difficulty: Difficulty,
     // TODO: technologies
 ) {
     const session = await auth();
