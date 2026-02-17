@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getMyProjects, getUser } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -6,6 +7,135 @@ import { formatDateAsDaysInPast } from "@/lib/utils";
 import DeleteProjectButton from "@/components/DeleteProjectButton";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import EditContactEmail from "@/components/EditContactEmail";
+import { Session } from "next-auth";
+import PageHeading from "@/components/PageHeading";
+
+async function ProfileContent({ session }: { session: Session }) {
+    const [{ mentoring, studying }, user] = await Promise.all([
+        getMyProjects(),
+        getUser(BigInt(session.user.id)),
+    ]);
+
+    return (
+        <div className="animate-fade-in">
+
+            <section className="mb-10">
+                <h2 className="font-serif text-xl mb-4">Personal details</h2>
+                <div className="space-y-4">
+                    <div>
+                        <span className="block text-sm text-muted mb-1">Contact email</span>
+                        <EditContactEmail currentEmail={session.user.contactEmail!} />
+                        <p className="text-xs text-muted mt-1">
+                            This is not publicly viewable, but is shared with mentors and students you&rsquo;re matched with.
+                        </p>
+                    </div>
+
+                    <div>
+                        <span className="block text-sm text-muted mb-1">Age verification</span>
+                        {user?.confirmedOver18 ? (
+                            <p className="text-sm">Confirmed over 18</p>
+                        ) : (
+                            <p className="text-sm text-amber-600 dark:text-amber-400">Not yet confirmed</p>
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            <section className="mb-10 pt-8 border-t border-border">
+                <h2 className="font-serif text-xl mb-4">
+                    Projects I&rsquo;m mentoring
+                    <span className="text-muted font-sans font-normal ml-2 text-sm">{mentoring.length}</span>
+                </h2>
+
+                {mentoring.length === 0 ? (
+                    <p className="text-muted text-sm">
+                        You haven&rsquo;t submitted any projects yet.{" "}
+                        <Link href="/submit" className="text-accent hover:underline">Submit one?</Link>
+                    </p>
+                ) : (
+                    <div className="grid gap-3">
+                        {mentoring.map((project) => (
+                            <div
+                                key={project.id.toString()}
+                                className="bg-card border border-border rounded-lg p-4"
+                            >
+                                <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                                    <Link
+                                        href={`/projects/${project.id}`}
+                                        className="font-medium hover:text-accent hover:underline transition-colors"
+                                    >
+                                        {project.title}
+                                    </Link>
+                                    <DifficultyBadge difficulty={project.difficulty} />
+                                    <span className="ml-auto text-sm">
+                                        {project.studentId === null && !project.completedAt ? (
+                                            <DeleteProjectButton projectId={project.id} />
+                                        ) : (
+                                            <span className="text-xs text-muted">
+                                                {project.completedAt ? "Completed" : "Has student"}
+                                            </span>
+                                        )}
+                                    </span>
+                                </div>
+                                <div className="text-sm text-muted flex flex-wrap gap-2">
+                                    <span>{formatDateAsDaysInPast(project.createdAt)}</span>
+                                    {project.student ? (
+                                        <span>· Student: @{project.student.githubUsername}</span>
+                                    ) : (
+                                        <span>· No student yet</span>
+                                    )}
+                                    {project.completedAt && (
+                                        <span className="text-emerald-600 dark:text-emerald-400">· Completed</span>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
+
+            <section className="pt-8 border-t border-border">
+                <h2 className="font-serif text-xl mb-4">
+                    Projects I&rsquo;m working on
+                    <span className="text-muted font-sans font-normal ml-2 text-sm">{studying.length}</span>
+                </h2>
+
+                {studying.length === 0 ? (
+                    <p className="text-muted text-sm">
+                        You haven&rsquo;t signed up for any projects yet.{" "}
+                        <Link href="/projects" className="text-accent hover:underline">Browse projects?</Link>
+                    </p>
+                ) : (
+                    <div className="grid gap-3">
+                        {studying.map((project) => (
+                            <div
+                                key={project.id.toString()}
+                                className="bg-card border border-border rounded-lg p-4"
+                            >
+                                <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                                    <Link
+                                        href={`/projects/${project.id}`}
+                                        className="font-medium hover:text-accent hover:underline transition-colors"
+                                    >
+                                        {project.title}
+                                    </Link>
+                                    <DifficultyBadge difficulty={project.difficulty} />
+                                </div>
+                                <div className="text-sm text-muted flex flex-wrap gap-2">
+                                    <span>Mentor: @{project.mentor.githubUsername}</span>
+                                    <span>· {formatDateAsDaysInPast(project.createdAt)}</span>
+                                    {project.completedAt && (
+                                        <span className="text-emerald-600 dark:text-emerald-400">· Completed</span>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
+        </div>
+    );
+}
 
 export default async function Page() {
     const session = await auth();
@@ -13,132 +143,12 @@ export default async function Page() {
         redirect("/api/auth/signin/github");
     }
 
-    const [{ mentoring, studying }, user] = await Promise.all([
-        getMyProjects(),
-        getUser(BigInt(session.user.id)),
-    ]);
-
     return (
         <>
-            <h1 className="text-2xl font-bold mb-6">My Profile</h1>
-
-            <section className="mb-10">
-                <h2 className="text-lg font-semibold mb-4">Personal details</h2>
-                <div className="space-y-4">
-                    <div>
-                        <span className="block text-sm text-gray-500 mb-1">Contact email</span>
-                        <EditContactEmail currentEmail={session.user.contactEmail!} />
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                            This is not publicly viewable, but is shared with mentors and students you&rsquo;re matched with.
-                        </p>
-                    </div>
-
-                    <div>
-                        <span className="block text-sm text-gray-500 mb-1">Age verification</span>
-                        {user?.confirmedOver18 ? (
-                            <p className="text-sm">Confirmed over 18</p>
-                        ) : (
-                            <p className="text-sm text-yellow-600 dark:text-yellow-400">Not yet confirmed</p>
-                        )}
-                    </div>
-                </div>
-            </section>
-
-            <section className="mb-10 pt-8 border-t border-gray-200 dark:border-gray-800">
-                <h2 className="text-lg font-semibold mb-4">
-                    Projects I&rsquo;m mentoring
-                    <span className="text-gray-400 font-normal ml-2 text-sm">{mentoring.length}</span>
-                </h2>
-
-                {mentoring.length === 0 ? (
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        You haven&rsquo;t submitted any projects yet.{" "}
-                        <Link href="/submit" className="text-blue-600 dark:text-blue-400 hover:underline">Submit one?</Link>
-                    </p>
-                ) : (
-                    <div className="grid gap-3">
-                        {mentoring.map((project) => (
-                            <div
-                                key={project.id.toString()}
-                                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 flex items-baseline justify-between gap-4"
-                            >
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Link
-                                            href={`/projects/${project.id}`}
-                                            className="font-medium hover:underline truncate"
-                                        >
-                                            {project.title}
-                                        </Link>
-                                        <DifficultyBadge difficulty={project.difficulty} />
-                                    </div>
-                                    <div className="text-sm text-gray-500 flex flex-wrap gap-2">
-                                        <span>{formatDateAsDaysInPast(project.createdAt)}</span>
-                                        {project.student ? (
-                                            <span>· Student: @{project.student.githubUsername}</span>
-                                        ) : (
-                                            <span>· No student yet</span>
-                                        )}
-                                        {project.completedAt && (
-                                            <span className="text-green-600 dark:text-green-400">· Completed</span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="shrink-0">
-                                    {project.studentId === null && !project.completedAt ? (
-                                        <DeleteProjectButton projectId={project.id} />
-                                    ) : (
-                                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                                            {project.completedAt ? "Completed" : "Has student"}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </section>
-
-            <section className="pt-8 border-t border-gray-200 dark:border-gray-800">
-                <h2 className="text-lg font-semibold mb-4">
-                    Projects I&rsquo;m working on
-                    <span className="text-gray-400 font-normal ml-2 text-sm">{studying.length}</span>
-                </h2>
-
-                {studying.length === 0 ? (
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        You haven&rsquo;t signed up for any projects yet.{" "}
-                        <Link href="/projects" className="text-blue-600 dark:text-blue-400 hover:underline">Browse projects?</Link>
-                    </p>
-                ) : (
-                    <div className="grid gap-3">
-                        {studying.map((project) => (
-                            <div
-                                key={project.id.toString()}
-                                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4"
-                            >
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Link
-                                        href={`/projects/${project.id}`}
-                                        className="font-medium hover:underline truncate"
-                                    >
-                                        {project.title}
-                                    </Link>
-                                    <DifficultyBadge difficulty={project.difficulty} />
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400 flex flex-wrap gap-2">
-                                    <span>Mentor: @{project.mentor.githubUsername}</span>
-                                    <span>· {formatDateAsDaysInPast(project.createdAt)}</span>
-                                    {project.completedAt && (
-                                        <span className="text-green-600 dark:text-green-400">· Completed</span>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </section>
+            <PageHeading>My Profile</PageHeading>
+            <Suspense fallback={<p className="text-muted">Loading profile...</p>}>
+                <ProfileContent session={session} />
+            </Suspense>
         </>
     );
 }

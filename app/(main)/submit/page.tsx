@@ -1,9 +1,10 @@
 import SubmitForm from "@/components/SubmitForm";
+import PageHeading from "@/components/PageHeading";
 
 export default async function Page() {
     return (
         <>
-            <h1 className="text-2xl font-bold mb-6">Submit a new project</h1>
+            <PageHeading>Submit a new project</PageHeading>
             <SubmitForm />
         </>
     );

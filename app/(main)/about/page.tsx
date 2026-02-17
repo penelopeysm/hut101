@@ -1,8 +1,10 @@
+import PageHeading from "@/components/PageHeading";
+
 export default function Page() {
     return (
-        // The first h1 needs manual styling to match the headings on other pages
-        <article className="prose dark:prose-invert max-w-2xl">
-            <h1 className="text-2xl">About hut101</h1>
+        <>
+            <PageHeading>About hut101</PageHeading>
+            <article className="prose dark:prose-invert max-w-2xl">
 
             <p>
                 TODO: What is hut101? A sentence or two about helping people take their
@@ -27,6 +29,7 @@ export default function Page() {
             <p>
                 TODO: A bit about the people behind hut101.
             </p>
-        </article>
+            </article>
+        </>
     );
 }

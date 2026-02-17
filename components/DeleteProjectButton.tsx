@@ -11,7 +11,7 @@ export default function DeleteProjectButton({ projectId }: { projectId: bigint }
     if (confirming) {
         return (
             <div className="flex items-baseline gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Are you sure?</span>
+                <span className="text-sm text-muted">Are you sure?</span>
                 <button
                     disabled={isPending}
                     onClick={() => {
@@ -23,13 +23,13 @@ export default function DeleteProjectButton({ projectId }: { projectId: bigint }
                             }
                         });
                     }}
-                    className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium disabled:opacity-50"
+                    className="cursor-pointer text-sm text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 font-medium disabled:opacity-50"
                 >
                     {isPending ? "Deleting..." : "Yes, delete"}
                 </button>
                 <button
                     onClick={() => setConfirming(false)}
-                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                    className="cursor-pointer text-sm text-muted hover:text-foreground"
                 >
                     Cancel
                 </button>
@@ -39,10 +39,10 @@ export default function DeleteProjectButton({ projectId }: { projectId: bigint }
 
     return (
         <div>
-            {error && <span className="text-sm text-red-600 dark:text-red-400 mr-2">{error}</span>}
+            {error && <span className="text-sm text-rose-600 dark:text-rose-400 mr-2">{error}</span>}
             <button
                 onClick={() => setConfirming(true)}
-                className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
+                className="cursor-pointer text-sm text-rose-500 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300"
             >
                 Delete
             </button>
