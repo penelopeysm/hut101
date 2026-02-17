@@ -29,3 +29,18 @@ body {
 code, pre {
   font-family: var(--font-mono);
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out both;
+}

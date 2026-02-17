@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getMyProjects, getUser } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -6,21 +7,16 @@ import { formatDateAsDaysInPast } from "@/lib/utils";
 import DeleteProjectButton from "@/components/DeleteProjectButton";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import EditContactEmail from "@/components/EditContactEmail";
+import { Session } from "next-auth";
 
-export default async function Page() {
-    const session = await auth();
-    if (!session) {
-        redirect("/api/auth/signin/github");
-    }
-
+async function ProfileContent({ session }: { session: Session }) {
     const [{ mentoring, studying }, user] = await Promise.all([
         getMyProjects(),
         getUser(BigInt(session.user.id)),
     ]);
 
     return (
-        <>
-            <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+        <div className="animate-fade-in">
 
             <section className="mb-10">
                 <h2 className="text-lg font-semibold mb-4">Personal details</h2>
@@ -139,6 +135,22 @@ export default async function Page() {
                     </div>
                 )}
             </section>
+        </div>
+    );
+}
+
+export default async function Page() {
+    const session = await auth();
+    if (!session) {
+        redirect("/api/auth/signin/github");
+    }
+
+    return (
+        <>
+            <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+            <Suspense fallback={<p className="text-gray-500">Loading profile...</p>}>
+                <ProfileContent session={session} />
+            </Suspense>
         </>
     );
 }

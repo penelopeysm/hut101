@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getProjects } from "@/lib/db";
 import Link from "next/link";
 import { formatDateAsDaysInPast } from "@/lib/utils";
@@ -55,19 +56,27 @@ function ProjectCard({ project }: { project: Project }) {
     );
 }
 
-export default async function Page() {
+async function ProjectList() {
     const projects = await getProjects();
+    return (
+        <div className="grid gap-4 animate-fade-in">
+            {projects.map((project) => (
+                <ProjectCard
+                    key={project.id.toString()}
+                    project={project}
+                />
+            ))}
+        </div>
+    );
+}
+
+export default function Page() {
     return (
         <>
             <h1 className="text-2xl font-bold mb-6">Projects</h1>
-            <div className="grid gap-4">
-                {projects.map((project) => (
-                    <ProjectCard
-                        key={project.id.toString()}
-                        project={project}
-                    />
-                ))}
-            </div>
+            <Suspense fallback={<p className="text-gray-500">Loading projects...</p>}>
+                <ProjectList />
+            </Suspense>
         </>
     );
 }
