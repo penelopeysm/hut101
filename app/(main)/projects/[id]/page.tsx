@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getProject } from "@/lib/db";
 import { formatDateAsDaysInPast } from "@/lib/utils";
 import { auth } from "@/lib/auth";
@@ -7,20 +8,11 @@ import SuccessBanner from "@/components/SuccessBanner";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import SignUpButton from "@/components/SignUpButton";
 
-export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
-    const { id } = await params;
-    let projectId: bigint;
-    try {
-        projectId = BigInt(id);
-    } catch {
-        notFound();
-    }
+async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: boolean }) {
     const project = await getProject(projectId);
     if (!project) {
         notFound();
     }
-
-    const { new: isNew } = await searchParams;
 
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
@@ -30,11 +22,8 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
 
     return (
-        <div className="max-w-2xl">
+        <div className="animate-fade-in">
             {isNew && <SuccessBanner message="Project submitted successfully!" />}
-            <Link href="/projects" className="text-sm text-muted hover:text-foreground transition-colors mb-4 inline-block">
-                &larr; All projects
-            </Link>
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="font-serif text-3xl">{project.title}</h1>
                 <DifficultyBadge difficulty={project.difficulty} />
@@ -120,6 +109,29 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                     </div>
                 </div>
             )}
+        </div>
+    );
+}
+
+export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
+    const { id } = await params;
+    let projectId: bigint;
+    try {
+        projectId = BigInt(id);
+    } catch {
+        notFound();
+    }
+
+    const { new: isNew } = await searchParams;
+
+    return (
+        <div className="max-w-2xl">
+            <Link href="/projects" className="text-sm text-muted hover:text-foreground transition-colors mb-4 inline-block">
+                &larr; All projects
+            </Link>
+            <Suspense fallback={<p className="text-muted">Loading project...</p>}>
+                <ProjectDetail projectId={projectId} isNew={!!isNew} />
+            </Suspense>
         </div>
     );
 }
