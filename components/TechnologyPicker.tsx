@@ -2,16 +2,41 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 
-type Technology = { id: bigint; name: string };
+type Technology = { id: unknown; name: string };
 
+// Supports two modes:
+// - Uncontrolled (forms): pass `defaultSelected`. State is managed internally
+//   and hidden <input>s are rendered for form submission.
+// - Controlled (e.g. filters): pass `selected` + `onChange`. No hidden inputs.
 export default function TechnologyPicker({
     technologies,
     defaultSelected = [],
+    selected: controlledSelected,
+    onChangeAction: onChange,
+    placeholder = "Search technologies...",
 }: {
     technologies: Technology[];
     defaultSelected?: string[];
+    selected?: string[];
+    onChangeAction?: (selected: string[]) => void;
+    placeholder?: string;
 }) {
-    const [selected, setSelected] = useState<string[]>(defaultSelected);
+    const [internalSelected, setInternalSelected] = useState<string[]>(defaultSelected);
+    const controlled = controlledSelected !== undefined;
+    const selected = controlled ? controlledSelected : internalSelected;
+
+    const updateSelected = useCallback(
+        (next: string[] | ((prev: string[]) => string[])) => {
+            if (controlled) {
+                const value = typeof next === "function" ? next(controlledSelected) : next;
+                onChange?.(value);
+            } else {
+                setInternalSelected(next);
+            }
+        },
+        [controlled, controlledSelected, onChange],
+    );
+
     const [query, setQuery] = useState("");
     const [open, setOpen] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
@@ -25,15 +50,15 @@ export default function TechnologyPicker({
     );
 
     const add = useCallback((name: string) => {
-        setSelected((prev) => [...prev, name]);
+        updateSelected((prev) => [...prev, name]);
         setQuery("");
         setActiveIndex(-1);
         inputRef.current?.focus();
-    }, []);
+    }, [updateSelected]);
 
     const remove = useCallback((name: string) => {
-        setSelected((prev) => prev.filter((n) => n !== name));
-    }, []);
+        updateSelected((prev) => prev.filter((n) => n !== name));
+    }, [updateSelected]);
 
     const handleKeyDown = useCallback(
         (e: React.KeyboardEvent) => {
@@ -89,14 +114,14 @@ export default function TechnologyPicker({
 
     return (
         <div ref={containerRef} className="relative">
-            {/* Hidden inputs for form submission */}
-            {selected.map((name) => (
+            {/* Hidden inputs for form submission (uncontrolled mode only) */}
+            {!controlled && selected.map((name) => (
                 <input key={name} type="hidden" name="technologies" value={name} />
             ))}
 
             {/* Selected pills + input */}
             <div
-                className="flex flex-wrap gap-1.5 w-full border border-border bg-transparent rounded-md px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-accent/40 focus-within:border-accent cursor-text"
+                className="flex flex-wrap gap-1.5 w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-accent/40 focus-within:border-accent cursor-text"
                 onClick={() => inputRef.current?.focus()}
             >
                 {selected.map((name) => (
@@ -126,7 +151,7 @@ export default function TechnologyPicker({
                     }}
                     onFocus={() => setOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder={selected.length === 0 ? "Search technologies..." : ""}
+                    placeholder={selected.length === 0 ? placeholder : ""}
                     className="flex-1 min-w-[120px] bg-transparent outline-none text-sm py-0.5 placeholder:text-muted/50"
                     role="combobox"
                     aria-expanded={open && available.length > 0}
