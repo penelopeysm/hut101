@@ -5,7 +5,7 @@ import SetupForm from "@/components/SetupForm";
 export default async function Page() {
     const session = await auth();
     if (!session) {
-        redirect("/api/auth/signin/github");
+        redirect("/signin");
     }
 
     // If they already have a contact email, no need to be here. The presence of
