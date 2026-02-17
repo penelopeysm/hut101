@@ -178,7 +178,7 @@ export default function ProjectList({
                                 key={s}
                                 type="button"
                                 onClick={() => toggleStatus(s)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${selectedStatuses.includes(s)
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors cursor-pointer ${selectedStatuses.includes(s)
                                         ? "bg-accent text-white border-accent"
                                         : "bg-transparent text-muted border-border hover:border-accent/50"
                                     }`}
@@ -198,7 +198,7 @@ export default function ProjectList({
                                 key={d}
                                 type="button"
                                 onClick={() => toggleDifficulty(d)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${selectedDifficulties.includes(d)
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors cursor-pointer ${selectedDifficulties.includes(d)
                                         ? "bg-accent text-white border-accent"
                                         : "bg-transparent text-muted border-border hover:border-accent/50"
                                     }`}
