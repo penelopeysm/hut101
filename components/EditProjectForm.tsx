@@ -5,6 +5,7 @@ import { updateProjectAction, type UpdateResult } from "@/app/(main)/projects/[i
 import Link from "next/link";
 import ErrorMessage from "@/components/ErrorMessage";
 import TechnologyPicker from "@/components/TechnologyPicker";
+import DeleteProjectButton from "@/components/DeleteProjectButton";
 import { inputClass, buttonClass } from "@/lib/styles";
 
 type Technology = { id: bigint; name: string };
@@ -23,9 +24,11 @@ type ProjectData = {
 export default function EditProjectForm({
     project,
     technologies,
+    hasStudent,
 }: {
     project: ProjectData;
     technologies: Technology[];
+    hasStudent: boolean;
 }) {
     const [state, formAction, isPending] = useActionState<UpdateResult | null, FormData>(updateProjectAction, null);
 
@@ -108,7 +111,7 @@ export default function EditProjectForm({
                 />
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-wrap items-center gap-3">
                 <button
                     type="submit"
                     disabled={isPending}
@@ -123,6 +126,13 @@ export default function EditProjectForm({
                 >
                     Cancel
                 </Link>
+                <div className="ml-auto">
+                    <DeleteProjectButton
+                        projectId={project.id}
+                        disabled={hasStudent}
+                        disabledReason="Can't delete a project with a student assigned"
+                    />
+                </div>
             </div>
         </form>
     );

@@ -47,7 +47,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return (
         <>
             <PageHeading>Edit project</PageHeading>
-            <EditProjectForm project={projectData} technologies={technologies} />
+            <EditProjectForm project={projectData} technologies={technologies} hasStudent={project.studentId !== null} />
         </>
     );
 }
