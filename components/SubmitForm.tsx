@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
 import ErrorMessage from "@/components/ErrorMessage";
+import TechnologyPicker from "@/components/TechnologyPicker";
 
 type Technology = { id: bigint; name: string };
 
@@ -76,25 +77,15 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                 </select>
             </div>
 
-            <fieldset>
-                <legend className="block text-sm font-medium mb-2">
+            <div>
+                <label className="block text-sm font-medium mb-1">
                     Technologies
-                </legend>
-                <div className="flex flex-wrap gap-3">
-                    {technologies.map((t) => (
-                        <label key={t.name} className="flex items-center gap-1.5 text-sm">
-                            <input
-                                type="checkbox"
-                                name="technologies"
-                                value={t.name}
-                                defaultChecked={state?.fields?.technologies?.includes(t.name)}
-                                className="accent-accent"
-                            />
-                            {t.name}
-                        </label>
-                    ))}
-                </div>
-            </fieldset>
+                </label>
+                <TechnologyPicker
+                    technologies={technologies}
+                    defaultSelected={state?.fields?.technologies}
+                />
+            </div>
 
             <button
                 type="submit"
