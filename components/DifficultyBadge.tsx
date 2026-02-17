@@ -15,7 +15,7 @@ const colors: Record<Difficulty, string> = {
 export default function DifficultyBadge({ difficulty }: { difficulty: Difficulty }) {
     return (
         <span
-            className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 -translate-y-0.5 ${colors[difficulty]}`}
+            className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${colors[difficulty]}`}
         >
             {labels[difficulty]}
         </span>

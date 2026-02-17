@@ -57,38 +57,35 @@ async function ProfileContent({ session }: { session: Session }) {
                         {mentoring.map((project) => (
                             <div
                                 key={project.id.toString()}
-                                className="bg-card border border-border rounded-lg p-4 flex items-baseline justify-between gap-4"
+                                className="bg-card border border-border rounded-lg p-4"
                             >
-                                <div className="min-w-0">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <Link
-                                            href={`/projects/${project.id}`}
-                                            className="font-medium hover:text-accent hover:underline truncate transition-colors"
-                                        >
-                                            {project.title}
-                                        </Link>
-                                        <DifficultyBadge difficulty={project.difficulty} />
-                                    </div>
-                                    <div className="text-sm text-muted flex flex-wrap gap-2">
-                                        <span>{formatDateAsDaysInPast(project.createdAt)}</span>
-                                        {project.student ? (
-                                            <span>· Student: @{project.student.githubUsername}</span>
+                                <div className="flex flex-wrap items-baseline gap-2 mb-1">
+                                    <Link
+                                        href={`/projects/${project.id}`}
+                                        className="font-medium hover:text-accent hover:underline transition-colors"
+                                    >
+                                        {project.title}
+                                    </Link>
+                                    <DifficultyBadge difficulty={project.difficulty} />
+                                    <span className="ml-auto text-sm">
+                                        {project.studentId === null && !project.completedAt ? (
+                                            <DeleteProjectButton projectId={project.id} />
                                         ) : (
-                                            <span>· No student yet</span>
+                                            <span className="text-xs text-muted">
+                                                {project.completedAt ? "Completed" : "Has student"}
+                                            </span>
                                         )}
-                                        {project.completedAt && (
-                                            <span className="text-emerald-600 dark:text-emerald-400">· Completed</span>
-                                        )}
-                                    </div>
+                                    </span>
                                 </div>
-
-                                <div className="shrink-0">
-                                    {project.studentId === null && !project.completedAt ? (
-                                        <DeleteProjectButton projectId={project.id} />
+                                <div className="text-sm text-muted flex flex-wrap gap-2">
+                                    <span>{formatDateAsDaysInPast(project.createdAt)}</span>
+                                    {project.student ? (
+                                        <span>· Student: @{project.student.githubUsername}</span>
                                     ) : (
-                                        <span className="text-xs text-muted">
-                                            {project.completedAt ? "Completed" : "Has student"}
-                                        </span>
+                                        <span>· No student yet</span>
+                                    )}
+                                    {project.completedAt && (
+                                        <span className="text-emerald-600 dark:text-emerald-400">· Completed</span>
                                     )}
                                 </div>
                             </div>
@@ -115,10 +112,10 @@ async function ProfileContent({ session }: { session: Session }) {
                                 key={project.id.toString()}
                                 className="bg-card border border-border rounded-lg p-4"
                             >
-                                <div className="flex items-center gap-2 mb-1">
+                                <div className="flex flex-wrap items-baseline gap-2 mb-1">
                                     <Link
                                         href={`/projects/${project.id}`}
-                                        className="font-medium hover:text-accent hover:underline truncate transition-colors"
+                                        className="font-medium hover:text-accent hover:underline transition-colors"
                                     >
                                         {project.title}
                                     </Link>

@@ -15,17 +15,15 @@ function ProjectCard({ project }: { project: Project }) {
             href={`/projects/${project.id}`}
             className="group block bg-card border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
         >
-            <div className="flex items-baseline justify-between gap-4 mb-2">
-                <div className="flex items-baseline gap-3 min-w-0">
-                    <h2 className="text-lg font-semibold truncate group-hover:text-accent transition-colors">{project.title}</h2>
-                    {isOpen ? (
-                        <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium shrink-0">Open</span>
-                    ) : project.completedAt ? (
-                        <span className="text-xs text-muted font-medium shrink-0">Completed</span>
-                    ) : (
-                        <span className="text-xs text-amber-600 dark:text-amber-400 font-medium shrink-0">In progress</span>
-                    )}
-                </div>
+            <div className="flex flex-wrap items-baseline gap-2 mb-2">
+                <h2 className="text-lg font-semibold group-hover:text-accent transition-colors">{project.title}</h2>
+                {isOpen ? (
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Open</span>
+                ) : project.completedAt ? (
+                    <span className="text-xs text-muted font-medium">Completed</span>
+                ) : (
+                    <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">In progress</span>
+                )}
                 <DifficultyBadge difficulty={project.difficulty} />
             </div>
 
@@ -36,7 +34,7 @@ function ProjectCard({ project }: { project: Project }) {
                 <span className="text-border">·</span>
                 <span>{formatDateAsDaysInPast(project.createdAt)}</span>
                 <span className="text-border">·</span>
-                <span className="text-accent">
+                <span className="text-accent break-all">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
                 </span>
             </div>
