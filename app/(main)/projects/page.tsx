@@ -2,71 +2,48 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = { title: "Projects" };
-import { getProjects } from "@/lib/db";
-import Link from "next/link";
-import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
-import DifficultyBadge from "@/components/DifficultyBadge";
+import { getProjects, getTechnologies } from "@/lib/db";
 import PageHeading from "@/components/PageHeading";
+import ProjectList from "@/components/ProjectList";
 
-type Project = Awaited<ReturnType<typeof getProjects>>[number];
-
-function ProjectCard({ project }: { project: Project }) {
-    const isOpen = isProjectOpen(project);
-
-    return (
-        <Link
-            href={`/projects/${project.id}`}
-            className="group block bg-card border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
-        >
-            <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                <h2 className="text-lg font-semibold group-hover:text-accent transition-colors">{project.title}</h2>
-                {isOpen ? (
-                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Open</span>
-                ) : project.completedAt ? (
-                    <span className="text-xs text-muted font-medium">Completed</span>
-                ) : (
-                    <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">In progress</span>
-                )}
-                <DifficultyBadge difficulty={project.difficulty} />
-            </div>
-
-            <p className="text-muted mb-4">{project.description}</p>
-
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted mb-3">
-                <span>@{project.mentor.githubUsername}</span>
-                <span>{formatDateAsDaysInPast(project.createdAt)}</span>
-                <span className="text-accent break-all">
-                    {project.repoOwner}/{project.repoName}#{project.issueNumber}
-                </span>
-            </div>
-
-            {project.technologies.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                    {project.technologies.map((pt) => (
-                        <span
-                            key={pt.technology.name}
-                            className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
-                        >
-                            {pt.technology.name}
-                        </span>
-                    ))}
-                </div>
-            )}
-        </Link>
-    );
+function serializeBigInt(value: bigint | null): string | null {
+    return value === null ? null : value.toString();
 }
 
-async function ProjectList() {
-    const projects = await getProjects();
+async function ProjectListLoader() {
+    const [projects, technologies] = await Promise.all([
+        getProjects(),
+        getTechnologies(),
+    ]);
+
+    const serializedProjects = projects.map((p) => ({
+        id: p.id.toString(),
+        title: p.title,
+        description: p.description,
+        difficulty: p.difficulty,
+        repoOwner: p.repoOwner,
+        repoName: p.repoName,
+        issueNumber: p.issueNumber,
+        createdAt: p.createdAt.toISOString(),
+        completedAt: p.completedAt?.toISOString() ?? null,
+        studentId: serializeBigInt(p.studentId),
+        mentorAvailable: p.mentorAvailable,
+        mentor: { githubUsername: p.mentor.githubUsername },
+        technologies: p.technologies.map((pt) => ({
+            technology: { name: pt.technology.name },
+        })),
+    }));
+
+    const serializedTechnologies = technologies.map((t) => ({
+        id: t.id.toString(),
+        name: t.name,
+    }));
+
     return (
-        <div className="grid gap-4 animate-fade-in">
-            {projects.map((project) => (
-                <ProjectCard
-                    key={project.id.toString()}
-                    project={project}
-                />
-            ))}
-        </div>
+        <ProjectList
+            projects={serializedProjects}
+            technologies={serializedTechnologies}
+        />
     );
 }
 
@@ -75,7 +52,7 @@ export default function Page() {
         <>
             <PageHeading>Projects</PageHeading>
             <Suspense fallback={<p role="status" className="text-muted">Loading projects...</p>}>
-                <ProjectList />
+                <ProjectListLoader />
             </Suspense>
         </>
     );
