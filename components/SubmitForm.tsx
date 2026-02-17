@@ -4,7 +4,9 @@ import { useActionState } from "react";
 import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
 import ErrorMessage from "@/components/ErrorMessage";
 
-export default function SubmitForm() {
+type Technology = { id: bigint; name: string };
+
+export default function SubmitForm({ technologies }: { technologies: Technology[] }) {
     const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);
 
     // key forces React to re-mount the form when state changes,
@@ -73,6 +75,26 @@ export default function SubmitForm() {
                     <option value="HARD">Hard</option>
                 </select>
             </div>
+
+            <fieldset>
+                <legend className="block text-sm font-medium mb-2">
+                    Technologies
+                </legend>
+                <div className="flex flex-wrap gap-3">
+                    {technologies.map((t) => (
+                        <label key={t.name} className="flex items-center gap-1.5 text-sm">
+                            <input
+                                type="checkbox"
+                                name="technologies"
+                                value={t.name}
+                                defaultChecked={state?.fields?.technologies?.includes(t.name)}
+                                className="accent-accent"
+                            />
+                            {t.name}
+                        </label>
+                    ))}
+                </div>
+            </fieldset>
 
             <button
                 type="submit"

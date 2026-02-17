@@ -12,6 +12,7 @@ export type SubmitResult = {
         description: string;
         githubIssue: string;
         difficulty: string;
+        technologies: string[];
     };
 };
 
@@ -20,8 +21,9 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
     const description = formData.get("description") as string;
     const githubIssueLink = formData.get("githubIssue") as string;
     const difficulty = formData.get("difficulty") as string;
+    const technologies = formData.getAll("technologies").map(String);
 
-    const fields = { title, description, githubIssue: githubIssueLink, difficulty };
+    const fields = { title, description, githubIssue: githubIssueLink, difficulty, technologies };
 
     const match =
         githubIssueLink.match(/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/);
@@ -40,6 +42,7 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
             repoName,
             issueNumber,
             difficulty as Difficulty,
+            technologies,
         );
     } catch (err) {
         console.error("Error submitting project:", err);

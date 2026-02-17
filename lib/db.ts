@@ -148,6 +148,10 @@ export async function signUpForProject(projectId: bigint) {
     ]);
 }
 
+export async function getTechnologies() {
+    return await prisma.technology.findMany({ orderBy: { name: "asc" } });
+}
+
 export async function submitProjectAsMentor(
     title: string,
     description: string,
@@ -155,7 +159,7 @@ export async function submitProjectAsMentor(
     repoName: string,
     issueNumber: number,
     difficulty: Difficulty,
-    // TODO: technologies
+    technologyNames: string[],
 ) {
     const session = await auth();
     if (!session) {
@@ -176,6 +180,18 @@ export async function submitProjectAsMentor(
             },
         },
     });
+
+    if (technologyNames.length > 0) {
+        const technologies = await prisma.technology.findMany({
+            where: { name: { in: technologyNames } },
+        });
+        await prisma.projectTechnology.createMany({
+            data: technologies.map((t) => ({
+                projectId: project.id,
+                technologyId: t.id,
+            })),
+        });
+    }
 
     await prisma.projectEvent.create({
         data: {

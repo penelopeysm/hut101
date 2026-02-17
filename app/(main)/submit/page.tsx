@@ -5,6 +5,7 @@ export const metadata: Metadata = { title: "Submit a Project" };
 import { redirect } from "next/navigation";
 import SubmitForm from "@/components/SubmitForm";
 import PageHeading from "@/components/PageHeading";
+import { getTechnologies } from "@/lib/db";
 
 export default async function Page() {
     const session = await auth();
@@ -12,10 +13,12 @@ export default async function Page() {
         redirect("/signin");
     }
 
+    const technologies = await getTechnologies();
+
     return (
         <>
             <PageHeading>Submit a new project</PageHeading>
-            <SubmitForm />
+            <SubmitForm technologies={technologies} />
         </>
     );
 }
