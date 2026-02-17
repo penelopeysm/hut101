@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getMyProjects, getUser } from "@/lib/db";
+
+export const metadata: Metadata = { title: "My Profile" };
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -146,7 +149,7 @@ export default async function Page() {
     return (
         <>
             <PageHeading>My Profile</PageHeading>
-            <Suspense fallback={<p className="text-muted">Loading profile...</p>}>
+            <Suspense fallback={<p role="status" className="text-muted">Loading profile...</p>}>
                 <ProfileContent session={session} />
             </Suspense>
         </>

@@ -1,6 +1,9 @@
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import SetupForm from "@/components/SetupForm";
+
+export const metadata: Metadata = { title: "Account Setup" };
 
 export default async function Page() {
     const session = await auth();

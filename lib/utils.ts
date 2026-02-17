@@ -14,6 +14,15 @@ export async function requireSetup() {
     return session;
 }
 
+export function isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/** A project is "open" when it has no student, isn't completed, and the mentor is available. */
+export function isProjectOpen(project: { studentId: bigint | null; completedAt: Date | null; mentorAvailable: boolean }): boolean {
+    return !project.studentId && !project.completedAt && project.mentorAvailable;
+}
+
 export function formatDateAsDaysInPast(date: Date) {
     const now = new Date();
     const lastSeenDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
