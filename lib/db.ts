@@ -152,6 +152,54 @@ export async function getTechnologies() {
     return await prisma.technology.findMany({ orderBy: { name: "asc" } });
 }
 
+export async function updateProject(
+    projectId: bigint,
+    title: string,
+    description: string,
+    repoOwner: string,
+    repoName: string,
+    issueNumber: number,
+    difficulty: Difficulty,
+    technologyNames: string[],
+) {
+    const session = await auth();
+    if (!session) {
+        throw new Error("Not authenticated");
+    }
+    const userId = BigInt(session.user.id);
+
+    const project = await prisma.project.findUnique({
+        where: { id: projectId },
+    });
+
+    if (!project) {
+        throw new Error("Project not found");
+    }
+    if (project.mentorId !== userId) {
+        throw new Error("You can only edit your own projects");
+    }
+
+    const technologies = technologyNames.length > 0
+        ? await prisma.technology.findMany({ where: { name: { in: technologyNames } } })
+        : [];
+
+    await prisma.$transaction([
+        prisma.project.update({
+            where: { id: projectId },
+            data: { title, description, repoOwner, repoName, issueNumber, difficulty },
+        }),
+        prisma.projectTechnology.deleteMany({ where: { projectId } }),
+        ...(technologies.length > 0
+            ? [prisma.projectTechnology.createMany({
+                data: technologies.map((t) => ({
+                    projectId,
+                    technologyId: t.id,
+                })),
+            })]
+            : []),
+    ]);
+}
+
 export async function submitProjectAsMentor(
     title: string,
     description: string,
