@@ -1,6 +1,11 @@
-/** A project is "open" when it has no student, isn't completed, and the mentor is available. */
-export function isProjectOpen(project: { studentId: unknown; completedAt: unknown; mentorAvailable: boolean }): boolean {
-    return !project.studentId && !project.completedAt && project.mentorAvailable;
+export type ProjectStatus = "open" | "in_progress" | "completed";
+
+export function projectStatus(project: { studentId: unknown; completedAt: unknown; mentorAvailable: boolean }): ProjectStatus {
+    if (project.completedAt) return "completed";
+    if (project.studentId) return "in_progress";
+    if (project.mentorAvailable) return "open";
+    // Has no student, not completed, but mentor is unavailable
+    return "in_progress";
 }
 
 export function formatDateAsDaysInPast(date: Date) {

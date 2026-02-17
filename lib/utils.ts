@@ -2,7 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 // Re-export pure utilities so existing server-side imports keep working.
-export { isProjectOpen, formatDateAsDaysInPast, isValidEmail } from "@/lib/shared-utils";
+export { projectStatus, formatDateAsDaysInPast, isValidEmail } from "@/lib/shared-utils";
+export type { ProjectStatus } from "@/lib/shared-utils";
 
 /**
  * Call this at the top of any page that requires the user to have

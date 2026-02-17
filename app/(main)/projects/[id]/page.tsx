@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         return { title: "Project" };
     }
 }
-import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
+import { formatDateAsDaysInPast, projectStatus } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,8 +28,8 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
     const isMentor = userId !== null && userId === project.mentorId;
-    const isOpen = isProjectOpen(project);
-    const canSignUp = isOpen && userId !== null && userId !== project.mentorId;
+    const status = projectStatus(project);
+    const canSignUp = status === "open" && userId !== null && userId !== project.mentorId;
 
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
 

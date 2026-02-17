@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Difficulty } from "@/lib/generated/enums";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import TechnologyPicker from "@/components/TechnologyPicker";
-import { isProjectOpen, formatDateAsDaysInPast } from "@/lib/shared-utils";
+import { projectStatus, type ProjectStatus, formatDateAsDaysInPast } from "@/lib/shared-utils";
 
 type Technology = { id: string; name: string };
 
@@ -31,10 +31,25 @@ const DIFFICULTY_ORDER: Record<Difficulty, number> = { EASY: 0, MEDIUM: 1, HARD:
 const DIFFICULTY_LABELS: Record<Difficulty, string> = { EASY: "Easy", MEDIUM: "Medium", HARD: "Hard" };
 const DIFFICULTIES: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
 
+const STATUSES: ProjectStatus[] = ["open", "in_progress", "completed"];
+const STATUS_FILTER_LABELS: Record<ProjectStatus, string> = { open: "Open", in_progress: "In progress", completed: "Completed" };
+
 // --- Project Card ---
 
+const STATUS_BADGE = {
+    open: "text-emerald-600 dark:text-emerald-400",
+    in_progress: "text-amber-600 dark:text-amber-400",
+    completed: "text-muted",
+} as const;
+
+const STATUS_LABEL = {
+    open: "Open",
+    in_progress: "In progress",
+    completed: "Completed",
+} as const;
+
 function ProjectCard({ project }: { project: SerializedProject }) {
-    const isOpen = isProjectOpen(project);
+    const status = projectStatus(project);
 
     return (
         <Link
@@ -43,13 +58,7 @@ function ProjectCard({ project }: { project: SerializedProject }) {
         >
             <div className="flex flex-wrap items-baseline gap-2 mb-2">
                 <h2 className="text-lg font-semibold group-hover:text-accent transition-colors">{project.title}</h2>
-                {isOpen ? (
-                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Open</span>
-                ) : project.completedAt ? (
-                    <span className="text-xs text-muted font-medium">Completed</span>
-                ) : (
-                    <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">In progress</span>
-                )}
+                <span className={`text-xs font-medium ${STATUS_BADGE[status]}`}>{STATUS_LABEL[status]}</span>
                 <DifficultyBadge difficulty={project.difficulty} />
             </div>
 
@@ -89,9 +98,16 @@ export default function ProjectList({
     technologies: Technology[];
 }) {
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedStatuses, setSelectedStatuses] = useState<ProjectStatus[]>(["open"]);
     const [selectedDifficulties, setSelectedDifficulties] = useState<Difficulty[]>([]);
     const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<SortOption>("newest");
+
+    const toggleStatus = (s: ProjectStatus) => {
+        setSelectedStatuses((prev) =>
+            prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s],
+        );
+    };
 
     const toggleDifficulty = (d: Difficulty) => {
         setSelectedDifficulties((prev) =>
@@ -101,6 +117,11 @@ export default function ProjectList({
 
     const filtered = useMemo(() => {
         let result = projects;
+
+        // Status filter
+        if (selectedStatuses.length > 0) {
+            result = result.filter((p) => selectedStatuses.includes(projectStatus(p)));
+        }
 
         // Text search
         if (searchQuery.trim()) {
@@ -142,23 +163,36 @@ export default function ProjectList({
         }
 
         return sorted;
-    }, [projects, searchQuery, selectedDifficulties, selectedTechnologies, sortBy]);
+    }, [projects, searchQuery, selectedStatuses, selectedDifficulties, selectedTechnologies, sortBy]);
 
     return (
         <div className="space-y-4 animate-fade-in">
             {/* Filters */}
-            <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-3">
-                    {/* Search */}
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search projects..."
-                        className="flex-1 min-w-[200px] border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none placeholder:text-muted/50"
-                    />
+            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center">
+                {/* Status — row 1 col 1 */}
+                <div className="flex items-center gap-2 md:col-start-1 md:row-start-1">
+                    <span className="text-xs text-muted font-medium">Status</span>
+                    <div className="flex gap-1.5">
+                        {STATUSES.map((s) => (
+                            <button
+                                key={s}
+                                type="button"
+                                onClick={() => toggleStatus(s)}
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                                    selectedStatuses.includes(s)
+                                        ? "bg-accent text-white border-accent"
+                                        : "bg-transparent text-muted border-border hover:border-accent/50"
+                                }`}
+                            >
+                                {STATUS_FILTER_LABELS[s]}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                    {/* Difficulty toggles */}
+                {/* Difficulty — row 2 col 1 */}
+                <div className="flex items-center gap-2 md:col-start-1 md:row-start-2">
+                    <span className="text-xs text-muted font-medium">Difficulty</span>
                     <div className="flex gap-1.5">
                         {DIFFICULTIES.map((d) => (
                             <button
@@ -177,12 +211,23 @@ export default function ProjectList({
                     </div>
                 </div>
 
-                {/* Technology filter */}
-                <TechnologyPicker
-                    technologies={technologies}
-                    selected={selectedTechnologies}
-                    onChangeAction={setSelectedTechnologies}
-                    placeholder="Filter by technology..."
+                {/* Technology — row 1 col 2 */}
+                <div className="w-full md:col-start-2 md:row-start-1">
+                    <TechnologyPicker
+                        technologies={technologies}
+                        selected={selectedTechnologies}
+                        onChangeAction={setSelectedTechnologies}
+                        placeholder="Filter by technology..."
+                    />
+                </div>
+
+                {/* Bottom-right: Search */}
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search projects..."
+                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none placeholder:text-muted/50"
                 />
             </div>
 
