@@ -168,21 +168,20 @@ export default function ProjectList({
     return (
         <div className="space-y-4 animate-fade-in">
             {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] md:grid-rows-2 md:grid-flow-col gap-x-6 gap-y-3 items-center">
                 {/* Status — row 1 col 1 */}
-                <div className="flex items-center gap-2 md:col-start-1 md:row-start-1">
-                    <span className="text-xs text-muted font-medium">Status</span>
+                <div className="flex items-center gap-2 ml-0.5">
+                    <span className="text-xs text-muted font-semibold">Status</span>
                     <div className="flex gap-1.5">
                         {STATUSES.map((s) => (
                             <button
                                 key={s}
                                 type="button"
                                 onClick={() => toggleStatus(s)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                                    selectedStatuses.includes(s)
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${selectedStatuses.includes(s)
                                         ? "bg-accent text-white border-accent"
                                         : "bg-transparent text-muted border-border hover:border-accent/50"
-                                }`}
+                                    }`}
                             >
                                 {STATUS_FILTER_LABELS[s]}
                             </button>
@@ -191,19 +190,18 @@ export default function ProjectList({
                 </div>
 
                 {/* Difficulty — row 2 col 1 */}
-                <div className="flex items-center gap-2 md:col-start-1 md:row-start-2">
-                    <span className="text-xs text-muted font-medium">Difficulty</span>
+                <div className="flex items-center gap-2 ml-0.5">
+                    <span className="text-xs text-muted font-semibold">Difficulty</span>
                     <div className="flex gap-1.5">
                         {DIFFICULTIES.map((d) => (
                             <button
                                 key={d}
                                 type="button"
                                 onClick={() => toggleDifficulty(d)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                                    selectedDifficulties.includes(d)
+                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${selectedDifficulties.includes(d)
                                         ? "bg-accent text-white border-accent"
                                         : "bg-transparent text-muted border-border hover:border-accent/50"
-                                }`}
+                                    }`}
                             >
                                 {DIFFICULTY_LABELS[d]}
                             </button>
@@ -212,7 +210,7 @@ export default function ProjectList({
                 </div>
 
                 {/* Technology — row 1 col 2 */}
-                <div className="w-full md:col-start-2 md:row-start-1">
+                <div className="w-full md:col-start-2">
                     <TechnologyPicker
                         technologies={technologies}
                         selected={selectedTechnologies}
@@ -226,7 +224,7 @@ export default function ProjectList({
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search projects..."
+                    placeholder="Search project (titles and descriptions)..."
                     className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none placeholder:text-muted/50"
                 />
             </div>
