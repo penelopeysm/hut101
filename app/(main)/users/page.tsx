@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { getUsers } from "@/lib/db";
+
+export const metadata: Metadata = { title: "Users" };
 import { auth } from "@/lib/auth";
 import { formatDateAsDaysInPast } from "@/lib/utils";
 import { notFound } from "next/navigation";

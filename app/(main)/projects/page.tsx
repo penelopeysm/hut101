@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
+
+export const metadata: Metadata = { title: "Projects" };
 import { getProjects } from "@/lib/db";
 import Link from "next/link";
 import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
@@ -29,11 +32,9 @@ function ProjectCard({ project }: { project: Project }) {
 
             <p className="text-muted mb-4">{project.description}</p>
 
-            <div className="flex flex-wrap items-center gap-2 text-sm text-muted mb-3">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-muted mb-3">
                 <span>@{project.mentor.githubUsername}</span>
-                <span className="text-border">·</span>
                 <span>{formatDateAsDaysInPast(project.createdAt)}</span>
-                <span className="text-border">·</span>
                 <span className="text-accent break-all">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
                 </span>
@@ -73,7 +74,7 @@ export default function Page() {
     return (
         <>
             <PageHeading>Projects</PageHeading>
-            <Suspense fallback={<p className="text-muted">Loading projects...</p>}>
+            <Suspense fallback={<p role="status" className="text-muted">Loading projects...</p>}>
                 <ProjectList />
             </Suspense>
         </>

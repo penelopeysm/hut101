@@ -45,6 +45,7 @@ export default function SetupForm() {
             <button
                 type="submit"
                 disabled={isPending}
+                aria-busy={isPending}
                 className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 {isPending ? "Saving..." : "Continue"}

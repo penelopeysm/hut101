@@ -30,12 +30,14 @@ export default function EditContactEmail({ currentEmail }: { currentEmail: strin
             <div className="flex items-baseline gap-2">
                 <input
                     type="email"
+                    aria-label="Contact email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="border border-border bg-transparent rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
                 />
                 <button
                     disabled={isPending}
+                    aria-busy={isPending}
                     onClick={() => {
                         startTransition(async () => {
                             const result = await updateContactEmail(email);

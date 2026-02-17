@@ -1,5 +1,16 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getProject } from "@/lib/db";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    try {
+        const project = await getProject(BigInt(id));
+        return { title: project?.title ?? "Project" };
+    } catch {
+        return { title: "Project" };
+    }
+}
 import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
@@ -129,7 +140,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
             <Link href="/projects" className="text-sm text-muted hover:text-foreground transition-colors mb-4 inline-block">
                 &larr; All projects
             </Link>
-            <Suspense fallback={<p className="text-muted">Loading project...</p>}>
+            <Suspense fallback={<p role="status" className="text-muted">Loading project...</p>}>
                 <ProjectDetail projectId={projectId} isNew={!!isNew} />
             </Suspense>
         </div>

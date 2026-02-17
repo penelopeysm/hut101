@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
+
+export const metadata: Metadata = { title: "Submit a Project" };
 import { redirect } from "next/navigation";
 import SubmitForm from "@/components/SubmitForm";
 import PageHeading from "@/components/PageHeading";

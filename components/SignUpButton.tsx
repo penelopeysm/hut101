@@ -8,36 +8,37 @@ export default function SignUpButton({ projectId }: { projectId: bigint }) {
     const { confirming, startConfirming, cancelConfirming, confirm, error, isPending } =
         useConfirmAction(() => signUpAction(projectId));
 
-    if (confirming) {
-        return (
-            <div className="flex items-baseline gap-3">
-                <span className="text-sm text-muted">Ready to take this on?</span>
-                <button
-                    disabled={isPending}
-                    onClick={confirm}
-                    className="cursor-pointer text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover transition-colors disabled:opacity-50"
-                >
-                    {isPending ? "Signing up..." : "Yes, sign me up"}
-                </button>
-                <button
-                    onClick={cancelConfirming}
-                    className="cursor-pointer text-sm text-muted hover:text-foreground"
-                >
-                    Cancel
-                </button>
-            </div>
-        );
-    }
-
     return (
-        <div>
-            {error && <ErrorMessage message={error} />}
-            <button
-                onClick={startConfirming}
-                className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
-            >
-                Sign up for this project
-            </button>
+        <div aria-live="polite">
+            {confirming ? (
+                <div className="flex items-baseline gap-3">
+                    <span className="text-sm text-muted">Ready to take this on?</span>
+                    <button
+                        disabled={isPending}
+                        aria-busy={isPending}
+                        onClick={confirm}
+                        className="cursor-pointer text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover transition-colors disabled:opacity-50"
+                    >
+                        {isPending ? "Signing up..." : "Yes, sign me up"}
+                    </button>
+                    <button
+                        onClick={cancelConfirming}
+                        className="cursor-pointer text-sm text-muted hover:text-foreground"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            ) : (
+                <div>
+                    {error && <ErrorMessage message={error} />}
+                    <button
+                        onClick={startConfirming}
+                        className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
+                    >
+                        Sign up for this project
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = { title: "Sign In" };
 import PageHeading from "@/components/PageHeading";
 import SignInButton from "@/components/SignInButton";
 
