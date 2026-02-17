@@ -2,19 +2,18 @@
 
 import { useActionState } from "react";
 import { setupAccount, type SetupResult } from "@/app/(setup)/setup/actions";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function SetupForm() {
     const [state, formAction, isPending] = useActionState<SetupResult | null, FormData>(setupAccount, null);
 
+    // key forces React to re-mount the form when state changes,
+    // ensuring all defaultValues (especially <select> and checkboxes) are applied
     const formKey = state?.error ? JSON.stringify(state.fields) : "initial";
 
     return (
         <form key={formKey} action={formAction} className="max-w-md space-y-5">
-            {state?.error && (
-                <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-sm rounded-md px-4 py-3">
-                    {state.error}
-                </div>
-            )}
+            {state?.error && <ErrorMessage message={state.error} />}
 
             <div>
                 <label htmlFor="contactEmail" className="block text-sm font-medium mb-1">

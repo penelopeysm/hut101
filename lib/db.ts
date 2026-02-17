@@ -47,7 +47,7 @@ export async function getUser(id: bigint) {
 export async function getMyProjects() {
     const session = await auth();
     if (!session) {
-        return { mentoring: [], studying: [] };
+        throw new Error("Not authenticated");
     }
     const userId = BigInt(session.user.id);
 

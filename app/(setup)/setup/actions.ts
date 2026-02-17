@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { isValidEmail } from "@/lib/utils";
 
 export type SetupResult = {
     success: boolean;
@@ -27,7 +28,7 @@ export async function setupAccount(_prev: SetupResult | null, formData: FormData
         return { success: false, error: "Please enter an email address.", fields };
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+    if (!isValidEmail(contactEmail)) {
         return { success: false, error: "That doesn't look like a valid email address.", fields };
     }
 

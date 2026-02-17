@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function SubmitForm() {
     const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);
@@ -12,11 +13,7 @@ export default function SubmitForm() {
 
     return (
         <form key={formKey} action={formAction} className="max-w-lg space-y-5">
-            {state?.error && (
-                <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-sm rounded-md px-4 py-3">
-                    {state.error}
-                </div>
-            )}
+            {state?.error && <ErrorMessage message={state.error} />}
 
             <div>
                 <label htmlFor="title" className="block text-sm font-medium mb-1">

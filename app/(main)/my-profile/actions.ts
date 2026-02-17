@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { deleteProject } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { isValidEmail } from "@/lib/utils";
 
 export async function deleteProjectAction(projectId: bigint): Promise<{ error?: string }> {
     try {
@@ -27,7 +28,7 @@ export async function updateContactEmail(email: string): Promise<{ error?: strin
     if (!trimmed) {
         return { error: "Please enter an email address." };
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+    if (!isValidEmail(trimmed)) {
         return { error: "That doesn't look like a valid email address." };
     }
 

@@ -20,7 +20,7 @@ export default function TopMenu({ user }: TopMenuProps) {
 
     return (
         <nav className="shadow-sm bg-background">
-            <div className="flex justify-between items-center px-4 sm:px-6 py-3">
+            <div className="flex justify-between items-center px-4 sm:px-6 h-14">
                 <div className="flex items-center gap-4 sm:gap-6">
                     <Link href="/" className="font-sans text-xl tracking-tight">
                         hut101

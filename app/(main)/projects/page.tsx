@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import { getProjects } from "@/lib/db";
 import Link from "next/link";
-import { formatDateAsDaysInPast } from "@/lib/utils";
+import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import PageHeading from "@/components/PageHeading";
 
 type Project = Awaited<ReturnType<typeof getProjects>>[number];
 
 function ProjectCard({ project }: { project: Project }) {
-    const isOpen = !project.studentId && !project.completedAt && project.mentorAvailable;
+    const isOpen = isProjectOpen(project);
 
     return (
         <Link

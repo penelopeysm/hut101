@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateContactEmail } from "@/app/(main)/my-profile/actions";
+import ErrorMessage from "@/components/ErrorMessage";
 
 export default function EditContactEmail({ currentEmail }: { currentEmail: string }) {
     const [editing, setEditing] = useState(false);
@@ -25,11 +26,7 @@ export default function EditContactEmail({ currentEmail }: { currentEmail: strin
 
     return (
         <div className="space-y-2">
-            {error && (
-                <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-sm rounded-md px-3 py-2">
-                    {error}
-                </div>
-            )}
+            {error && <ErrorMessage message={error} />}
             <div className="flex items-baseline gap-2">
                 <input
                     type="email"

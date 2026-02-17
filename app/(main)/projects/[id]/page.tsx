@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { getProject } from "@/lib/db";
-import { formatDateAsDaysInPast } from "@/lib/utils";
+import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -16,7 +16,7 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
 
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
-    const isOpen = !project.studentId && !project.completedAt && project.mentorAvailable;
+    const isOpen = isProjectOpen(project);
     const canSignUp = isOpen && userId !== null && userId !== project.mentorId;
 
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
