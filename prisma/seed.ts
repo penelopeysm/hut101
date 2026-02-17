@@ -25,9 +25,30 @@ const userData: Prisma.UserCreateInput[] = [
 ];
 
 const technologyData: Prisma.TechnologyCreateInput[] = [
+    { name: "C" },
+    { name: "C++" },
+    { name: "CSS" },
+    { name: "Docker" },
+    { name: "Go" },
+    { name: "Haskell" },
+    { name: "HTML" },
+    { name: "Java" },
+    { name: "JavaScript" },
     { name: "Julia" },
+    { name: "Kotlin" },
+    { name: "Lua" },
+    { name: "OCaml" },
+    { name: "PostgreSQL" },
     { name: "Python" },
+    { name: "R" },
+    { name: "Ruby" },
     { name: "Rust" },
+    { name: "Scala" },
+    { name: "Shell" },
+    { name: "SQL" },
+    { name: "Swift" },
+    { name: "TypeScript" },
+    { name: "Zig" },
 ];
 
 export async function main() {
