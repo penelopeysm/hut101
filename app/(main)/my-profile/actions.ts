@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { deleteProject } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { isValidEmail } from "@/lib/utils";
 
 export async function deleteProjectAction(projectId: bigint): Promise<{ error?: string }> {
@@ -14,8 +15,7 @@ export async function deleteProjectAction(projectId: bigint): Promise<{ error?: 
         return { error: message };
     }
 
-    revalidatePath("/my-profile");
-    return {};
+    redirect("/projects");
 }
 
 export async function updateContactEmail(email: string): Promise<{ error?: string }> {

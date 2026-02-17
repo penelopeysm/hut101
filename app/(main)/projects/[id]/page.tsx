@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         return { title: "Project" };
     }
 }
-import { formatDateAsDaysInPast, isProjectOpen } from "@/lib/utils";
+import { formatDateAsDaysInPast, projectStatus } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -27,8 +27,9 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
 
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
-    const isOpen = isProjectOpen(project);
-    const canSignUp = isOpen && userId !== null && userId !== project.mentorId;
+    const isMentor = userId !== null && userId === project.mentorId;
+    const status = projectStatus(project);
+    const canSignUp = status === "open" && userId !== null && userId !== project.mentorId;
 
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
 
@@ -37,7 +38,25 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
             {isNew && <SuccessBanner message="Project submitted successfully!" />}
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="font-serif text-3xl">{project.title}</h1>
+                {isMentor && (
+                    <Link
+                        href={`/projects/${project.id}/edit`}
+                        className="text-sm text-accent hover:text-accent-hover transition-colors"
+                    >
+                        Edit
+                    </Link>
+                )}
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 mb-4">
                 <DifficultyBadge difficulty={project.difficulty} />
+                {project.technologies.map((pt) => (
+                    <span
+                        key={pt.technology.name}
+                        className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
+                    >
+                        {pt.technology.name}
+                    </span>
+                ))}
             </div>
 
             <p className="text-muted mb-6 leading-relaxed">{project.description}</p>
@@ -54,9 +73,10 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
                 <div className="flex gap-2 text-sm">
                     <span className="text-muted w-20 shrink-0">Student</span>
                     <span>
-                        {project.student
-                            ? `@${project.student.githubUsername}`
-                            : "No one yet — this project is open!"}
+                        {project.student === null
+                            ? "No one yet — this project is open!"
+                            : `@${project.student.githubUsername}${session && project.student.id === userId ? " (that's you!)" : ""
+                            }`}
                     </span>
                 </div>
 
@@ -85,19 +105,6 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
             {canSignUp && (
                 <div className="mb-8">
                     <SignUpButton projectId={project.id} />
-                </div>
-            )}
-
-            {project.technologies.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-8">
-                    {project.technologies.map((pt) => (
-                        <span
-                            key={pt.technology.name}
-                            className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
-                        >
-                            {pt.technology.name}
-                        </span>
-                    ))}
                 </div>
             )}
 

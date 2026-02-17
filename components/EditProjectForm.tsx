@@ -1,22 +1,45 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
+import { updateProjectAction, type UpdateResult } from "@/app/(main)/projects/[id]/edit/actions";
+import Link from "next/link";
 import ErrorMessage from "@/components/ErrorMessage";
 import TechnologyPicker from "@/components/TechnologyPicker";
+import DeleteProjectButton from "@/components/DeleteProjectButton";
 import { inputClass, buttonClass } from "@/lib/styles";
 
 type Technology = { id: bigint; name: string };
 
-export default function SubmitForm({ technologies }: { technologies: Technology[] }) {
-    const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);
+type ProjectData = {
+    id: bigint;
+    title: string;
+    description: string;
+    repoOwner: string;
+    repoName: string;
+    issueNumber: number;
+    difficulty: string;
+    technologies: string[];
+};
 
-    // key forces React to re-mount the form when state changes,
-    // ensuring all defaultValues (especially <select>) are applied
+export default function EditProjectForm({
+    project,
+    technologies,
+    hasStudent,
+}: {
+    project: ProjectData;
+    technologies: Technology[];
+    hasStudent: boolean;
+}) {
+    const [state, formAction, isPending] = useActionState<UpdateResult | null, FormData>(updateProjectAction, null);
+
+    const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
+
     const formKey = state?.error ? JSON.stringify(state.fields) : "initial";
 
     return (
         <form key={formKey} action={formAction} className="max-w-lg space-y-5">
+            <input type="hidden" name="projectId" value={project.id.toString()} />
+
             {state?.error && <ErrorMessage message={state.error} />}
 
             <div>
@@ -27,7 +50,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     id="title"
                     name="title"
                     required
-                    defaultValue={state?.fields?.title ?? ""}
+                    defaultValue={state?.fields?.title ?? project.title}
                     className={inputClass}
                 />
             </div>
@@ -41,7 +64,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     name="description"
                     required
                     rows={4}
-                    defaultValue={state?.fields?.description ?? ""}
+                    defaultValue={state?.fields?.description ?? project.description}
                     className={inputClass}
                 />
             </div>
@@ -54,7 +77,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     id="githubIssue"
                     name="githubIssue"
                     required
-                    defaultValue={state?.fields?.githubIssue ?? ""}
+                    defaultValue={state?.fields?.githubIssue ?? issueUrl}
                     placeholder="https://github.com/owner/repo/issues/123"
                     className={`${inputClass} placeholder:text-muted/50`}
                 />
@@ -68,7 +91,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     id="difficulty"
                     name="difficulty"
                     required
-                    defaultValue={state?.fields?.difficulty ?? ""}
+                    defaultValue={state?.fields?.difficulty ?? project.difficulty}
                     className={inputClass}
                 >
                     <option value="">Select difficulty</option>
@@ -84,18 +107,33 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                 </label>
                 <TechnologyPicker
                     technologies={technologies}
-                    defaultSelected={state?.fields?.technologies}
+                    defaultSelected={state?.fields?.technologies ?? project.technologies}
                 />
             </div>
 
-            <button
-                type="submit"
-                disabled={isPending}
-                aria-busy={isPending}
-                className={buttonClass}
-            >
-                {isPending ? "Submitting..." : "Submit project"}
-            </button>
+            <div className="flex flex-wrap items-center gap-3">
+                <button
+                    type="submit"
+                    disabled={isPending}
+                    aria-busy={isPending}
+                    className={buttonClass}
+                >
+                    {isPending ? "Saving..." : "Save changes"}
+                </button>
+                <Link
+                    href={`/projects/${project.id}`}
+                    className="px-4 py-2 rounded-md text-sm font-medium border border-border text-muted hover:text-foreground transition-colors"
+                >
+                    Cancel
+                </Link>
+                <div className="ml-auto">
+                    <DeleteProjectButton
+                        projectId={project.id}
+                        disabled={hasStudent}
+                        disabledReason="Can't delete a project with a student assigned"
+                    />
+                </div>
+            </div>
         </form>
     );
 }

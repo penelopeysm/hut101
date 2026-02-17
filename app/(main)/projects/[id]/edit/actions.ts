@@ -1,11 +1,11 @@
 "use server";
 
-import { submitProjectAsMentor } from "@/lib/db";
+import { updateProject } from "@/lib/db";
 import { redirect } from "next/navigation";
 import type { Difficulty } from "@/lib/generated/client";
 import { parseGitHubIssueLink } from "@/lib/github";
 
-export type SubmitResult = {
+export type UpdateResult = {
     success: boolean;
     error?: string;
     fields?: {
@@ -17,7 +17,8 @@ export type SubmitResult = {
     };
 };
 
-export async function submitProject(_prev: SubmitResult | null, formData: FormData): Promise<SubmitResult> {
+export async function updateProjectAction(_prev: UpdateResult | null, formData: FormData): Promise<UpdateResult> {
+    const projectId = BigInt(formData.get("projectId") as string);
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
     const githubIssueLink = formData.get("githubIssue") as string;
@@ -32,9 +33,9 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
     }
     const { repoOwner, repoName, issueNumber } = parsed;
 
-    let project;
     try {
-        project = await submitProjectAsMentor(
+        await updateProject(
+            projectId,
             title,
             description,
             repoOwner,
@@ -44,9 +45,9 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
             technologies,
         );
     } catch (err) {
-        console.error("Error submitting project:", err);
-        return { success: false, error: "Something went wrong while submitting. Please try again.", fields };
+        console.error("Error updating project:", err);
+        return { success: false, error: "Something went wrong while saving. Please try again.", fields };
     }
 
-    redirect(`/projects/${project.id}?new=1`);
+    redirect(`/projects/${projectId}`);
 }

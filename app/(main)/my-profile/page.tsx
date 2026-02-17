@@ -7,7 +7,6 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatDateAsDaysInPast } from "@/lib/utils";
-import DeleteProjectButton from "@/components/DeleteProjectButton";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import EditContactEmail from "@/components/EditContactEmail";
 import { Session } from "next-auth";
@@ -70,15 +69,12 @@ async function ProfileContent({ session }: { session: Session }) {
                                         {project.title}
                                     </Link>
                                     <DifficultyBadge difficulty={project.difficulty} />
-                                    <span className="ml-auto text-sm">
-                                        {project.studentId === null && !project.completedAt ? (
-                                            <DeleteProjectButton projectId={project.id} />
-                                        ) : (
-                                            <span className="text-xs text-muted">
-                                                {project.completedAt ? "Completed" : "Has student"}
-                                            </span>
-                                        )}
-                                    </span>
+                                    <Link
+                                        href={`/projects/${project.id}/edit`}
+                                        className="ml-auto text-sm text-accent hover:underline"
+                                    >
+                                        Edit
+                                    </Link>
                                 </div>
                                 <div className="text-sm text-muted flex flex-wrap gap-2">
                                     <span>{formatDateAsDaysInPast(project.createdAt)}</span>

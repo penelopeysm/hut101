@@ -1,4 +1,4 @@
-import type { Difficulty } from "@/lib/generated/client";
+import type { Difficulty } from "@/lib/generated/enums";
 
 const labels: Record<Difficulty, string> = {
     EASY: "Easy",
