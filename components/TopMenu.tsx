@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { signIn, signOut } from "next-auth/react";
 
 interface TopMenuUser {
     id: bigint;
@@ -40,9 +41,9 @@ export default function TopMenu({ user }: TopMenuProps) {
                         <Link href="/my-profile" className="hidden sm:inline text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                             My Profile
                         </Link>
-                        <Link href="/api/auth/signout" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                        <button onClick={() => signOut()} className="cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                             Logout
-                        </Link>
+                        </button>
                         <Link href="/my-profile">
                             <Image
                                 src={user.githubPicture}
@@ -54,12 +55,12 @@ export default function TopMenu({ user }: TopMenuProps) {
                         </Link>
                     </>
                 ) : (
-                    <Link
-                        href="/api/auth/signin/github"
-                        className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-1.5 rounded-md text-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+                    <button
+                        onClick={() => signIn("github")}
+                        className="cursor-pointer bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-3 py-1.5 rounded-md text-sm hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
                     >
                         Login with GitHub
-                    </Link>
+                    </button>
                 )}
             </div>
         </nav>
