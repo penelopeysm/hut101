@@ -75,9 +75,8 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
                     <span>
                         {project.student === null
                             ? "No one yet — this project is open!"
-                            : ((session && (project.student.id === userId)) ?
-                                `@${project.student.githubUsername} (that's you!)` : `@${project.student.githubUsername}`)
-                        }
+                            : `@${project.student.githubUsername}${session && project.student.id === userId ? " (that's you!)" : ""
+                            }`}
                     </span>
                 </div>
 

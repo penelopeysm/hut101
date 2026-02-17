@@ -64,8 +64,8 @@ function ProjectCard({ project }: { project: SerializedProject }) {
 
             <p className="text-muted mb-4">{project.description}</p>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted mb-3">
-                <span>@{project.mentor.githubUsername}</span>
+            <div className="flex flex-wrap items-center gap-5 text-sm text-muted mb-3">
+                <span>Mentor: @{project.mentor.githubUsername}</span>
                 <span>{formatDateAsDaysInPast(new Date(project.createdAt))}</span>
                 <span className="text-accent break-all">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
