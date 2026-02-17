@@ -3,6 +3,7 @@
 import { updateProject } from "@/lib/db";
 import { redirect } from "next/navigation";
 import type { Difficulty } from "@/lib/generated/client";
+import { parseGitHubIssueLink } from "@/lib/github";
 
 export type UpdateResult = {
     success: boolean;
@@ -26,13 +27,11 @@ export async function updateProjectAction(_prev: UpdateResult | null, formData: 
 
     const fields = { title, description, githubIssue: githubIssueLink, difficulty, technologies };
 
-    const match =
-        githubIssueLink.match(/github\.com\/([^\/]+)\/([^\/]+)\/issues\/(\d+)/);
-    if (!match) {
+    const parsed = parseGitHubIssueLink(githubIssueLink);
+    if (!parsed) {
         return { success: false, error: "That doesn't look like a GitHub issue link. It should look like https://github.com/owner/repo/issues/123", fields };
     }
-    const [, repoOwner, repoName, issueNumberStr] = match;
-    const issueNumber = parseInt(issueNumberStr);
+    const { repoOwner, repoName, issueNumber } = parsed;
 
     try {
         await updateProject(

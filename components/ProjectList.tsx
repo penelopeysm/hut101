@@ -5,25 +5,7 @@ import Link from "next/link";
 import type { Difficulty } from "@/lib/generated/enums";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import TechnologyPicker from "@/components/TechnologyPicker";
-
-function isProjectOpen(project: { studentId: string | null; completedAt: string | null; mentorAvailable: boolean }): boolean {
-    return !project.studentId && !project.completedAt && project.mentorAvailable;
-}
-
-function formatDateAsDaysInPast(date: Date) {
-    const now = new Date();
-    const lastSeenDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    if (lastSeenDay > nowDay) {
-        return "in the future (timey wimey stuff going on here...)";
-    } else if (lastSeenDay.getTime() === nowDay.getTime()) {
-        return "today";
-    } else {
-        const daysAgo = Math.round((nowDay.getTime() - lastSeenDay.getTime()) / (1000 * 60 * 60 * 24));
-        return `${daysAgo} day${daysAgo > 1 ? "s" : ""} ago`;
-    }
-}
+import { isProjectOpen, formatDateAsDaysInPast } from "@/lib/shared-utils";
 
 type Technology = { id: string; name: string };
 

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { setupAccount, type SetupResult } from "@/app/(setup)/setup/actions";
 import ErrorMessage from "@/components/ErrorMessage";
+import { inputClass, buttonClass } from "@/lib/styles";
 
 export default function SetupForm() {
     const [state, formAction, isPending] = useActionState<SetupResult | null, FormData>(setupAccount, null);
@@ -26,7 +27,7 @@ export default function SetupForm() {
                     required
                     defaultValue={state?.fields?.contactEmail ?? ""}
                     placeholder="you@example.com"
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent placeholder:text-muted/50"
+                    className={`${inputClass} placeholder:text-muted/50`}
                 />
             </div>
 
@@ -46,7 +47,7 @@ export default function SetupForm() {
                 type="submit"
                 disabled={isPending}
                 aria-busy={isPending}
-                className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className={buttonClass}
             >
                 {isPending ? "Saving..." : "Continue"}
             </button>

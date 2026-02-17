@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
 import ErrorMessage from "@/components/ErrorMessage";
 import TechnologyPicker from "@/components/TechnologyPicker";
+import { inputClass, buttonClass } from "@/lib/styles";
 
 type Technology = { id: bigint; name: string };
 
@@ -27,7 +28,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     name="title"
                     required
                     defaultValue={state?.fields?.title ?? ""}
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className={inputClass}
                 />
             </div>
 
@@ -41,7 +42,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     required
                     rows={4}
                     defaultValue={state?.fields?.description ?? ""}
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className={inputClass}
                 />
             </div>
 
@@ -55,7 +56,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     required
                     defaultValue={state?.fields?.githubIssue ?? ""}
                     placeholder="https://github.com/owner/repo/issues/123"
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent placeholder:text-muted/50"
+                    className={`${inputClass} placeholder:text-muted/50`}
                 />
             </div>
 
@@ -68,7 +69,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     name="difficulty"
                     required
                     defaultValue={state?.fields?.difficulty ?? ""}
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className={inputClass}
                 >
                     <option value="">Select difficulty</option>
                     <option value="EASY">Easy</option>
@@ -91,7 +92,7 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                 type="submit"
                 disabled={isPending}
                 aria-busy={isPending}
-                className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className={buttonClass}
             >
                 {isPending ? "Submitting..." : "Submit project"}
             </button>

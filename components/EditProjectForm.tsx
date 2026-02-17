@@ -5,6 +5,7 @@ import { updateProjectAction, type UpdateResult } from "@/app/(main)/projects/[i
 import Link from "next/link";
 import ErrorMessage from "@/components/ErrorMessage";
 import TechnologyPicker from "@/components/TechnologyPicker";
+import { inputClass, buttonClass } from "@/lib/styles";
 
 type Technology = { id: bigint; name: string };
 
@@ -47,7 +48,7 @@ export default function EditProjectForm({
                     name="title"
                     required
                     defaultValue={state?.fields?.title ?? project.title}
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className={inputClass}
                 />
             </div>
 
@@ -61,7 +62,7 @@ export default function EditProjectForm({
                     required
                     rows={4}
                     defaultValue={state?.fields?.description ?? project.description}
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className={inputClass}
                 />
             </div>
 
@@ -75,7 +76,7 @@ export default function EditProjectForm({
                     required
                     defaultValue={state?.fields?.githubIssue ?? issueUrl}
                     placeholder="https://github.com/owner/repo/issues/123"
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent placeholder:text-muted/50"
+                    className={`${inputClass} placeholder:text-muted/50`}
                 />
             </div>
 
@@ -88,7 +89,7 @@ export default function EditProjectForm({
                     name="difficulty"
                     required
                     defaultValue={state?.fields?.difficulty ?? project.difficulty}
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className={inputClass}
                 >
                     <option value="">Select difficulty</option>
                     <option value="EASY">Easy</option>
@@ -112,7 +113,7 @@ export default function EditProjectForm({
                     type="submit"
                     disabled={isPending}
                     aria-busy={isPending}
-                    className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className={buttonClass}
                 >
                     {isPending ? "Saving..." : "Save changes"}
                 </button>
