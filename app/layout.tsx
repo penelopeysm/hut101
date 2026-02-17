@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { DM_Sans, Lora, IBM_Plex_Mono } from "next/font/google";
 import TopMenu from "@/components/TopMenu";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 
-const fontSans = IBM_Plex_Sans({
+const fontSans = DM_Sans({
     variable: "--font-sans",
-    weight: ["400", "700"],
+    subsets: ["latin"],
+});
+
+const fontSerif = Lora({
+    variable: "--font-serif",
     subsets: ["latin"],
 });
 
@@ -36,7 +40,7 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${fontSans.variable} ${fontMono.variable} antialiased`}
+                className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
             >
                 <TopMenu user={topMenuProps} />
                 <main className="max-w-4xl mx-auto px-6 py-8">
