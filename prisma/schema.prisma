@@ -65,6 +65,8 @@ model Project {
   mentorId  BigInt
   mentor    User     @relation("MentorProjects", fields: [mentorId], references: [id])
   mentorAvailable Boolean @default(true)
+  mentorJobRole       String?
+  mentorTimeCommitment String?
 
   studentId BigInt?
   student   User?    @relation("StudentProjects", fields: [studentId], references: [id])

@@ -21,6 +21,8 @@ async function VerificationQueue() {
         repoName: p.repoName,
         issueNumber: p.issueNumber,
         createdAt: p.createdAt.toISOString(),
+        mentorJobRole: p.mentorJobRole,
+        mentorTimeCommitment: p.mentorTimeCommitment,
         mentor: { id: p.mentor.id.toString(), githubUsername: p.mentor.githubUsername },
         technologies: p.technologies.map((pt) => ({
             technology: { name: pt.technology.name },

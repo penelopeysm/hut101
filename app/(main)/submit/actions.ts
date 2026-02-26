@@ -14,6 +14,8 @@ export type SubmitResult = {
         githubIssue: string;
         difficulty: string;
         technologies: string[];
+        mentorJobRole: string;
+        mentorTimeCommitment: string;
     };
 };
 
@@ -23,8 +25,10 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
     const githubIssueLink = formData.get("githubIssue") as string;
     const difficulty = formData.get("difficulty") as string;
     const technologies = formData.getAll("technologies").map(String);
+    const mentorJobRole = (formData.get("mentorJobRole") as string) ?? "";
+    const mentorTimeCommitment = (formData.get("mentorTimeCommitment") as string) ?? "";
 
-    const fields = { title, description, githubIssue: githubIssueLink, difficulty, technologies };
+    const fields = { title, description, githubIssue: githubIssueLink, difficulty, technologies, mentorJobRole, mentorTimeCommitment };
 
     const parsed = parseGitHubIssueLink(githubIssueLink);
     if (!parsed) {
@@ -42,6 +46,8 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
             issueNumber,
             difficulty as Difficulty,
             technologies,
+            mentorJobRole || null,
+            mentorTimeCommitment || null,
         );
     } catch (err) {
         console.error("Error submitting project:", err);

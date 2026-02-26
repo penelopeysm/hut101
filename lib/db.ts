@@ -229,6 +229,8 @@ export async function submitProject(
     issueNumber: number,
     difficulty: Difficulty,
     technologyNames: string[],
+    mentorJobRole: string | null,
+    mentorTimeCommitment: string | null,
 ) {
     const session = await auth();
     if (!session) {
@@ -246,6 +248,8 @@ export async function submitProject(
             repoName,
             issueNumber,
             difficulty,
+            mentorJobRole,
+            mentorTimeCommitment,
             verification: autoVerify ? "VERIFIED" : "PENDING",
             mentor: {
                 connect: { id: userId },

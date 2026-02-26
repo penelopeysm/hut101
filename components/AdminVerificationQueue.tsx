@@ -25,6 +25,8 @@ export interface QueueProject {
     createdAt: string;
     mentor: { id: string; githubUsername: string };
     technologies: { technology: { name: string } }[];
+    mentorJobRole: string | null;
+    mentorTimeCommitment: string | null;
 }
 
 function ProjectCard({
@@ -80,6 +82,23 @@ function ProjectCard({
                             {pt.technology.name}
                         </span>
                     ))}
+                </div>
+            )}
+
+            {(project.mentorJobRole || project.mentorTimeCommitment) && (
+                <div className="text-sm mb-3 space-y-2 border-t border-border pt-3">
+                    {project.mentorJobRole && (
+                        <div>
+                            <span className="font-medium">Job role:</span>{" "}
+                            <span className="text-muted">{project.mentorJobRole}</span>
+                        </div>
+                    )}
+                    {project.mentorTimeCommitment && (
+                        <div>
+                            <span className="font-medium">Time commitment:</span>{" "}
+                            <span className="text-muted">{project.mentorTimeCommitment}</span>
+                        </div>
+                    )}
                 </div>
             )}
 
