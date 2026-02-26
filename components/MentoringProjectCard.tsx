@@ -25,7 +25,7 @@ export default function MentoringProjectCard({ project, showEditControls, canEdi
                 <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium px-1 py-0.5 rounded inline-block mb-2">Pending verification</span>
             )}
             {showEditControls && project.verification === "REJECTED" && (
-                <span className="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-medium px-2 py-0.5 rounded inline-block mb-1">Rejected</span>
+                <span className="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-medium px-2 py-0.5 rounded inline-block mb-2">Rejected</span>
             )}
             <div className="flex flex-wrap items-baseline gap-2 mb-1">
                 <Link
