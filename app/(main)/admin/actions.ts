@@ -1,15 +1,15 @@
 "use server";
 
-import { verifyProject, rejectProject } from "@/lib/db";
+import { setProjectVerification } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 export async function verifyProjectAction(projectId: bigint) {
-    await verifyProject(projectId);
+    await setProjectVerification(projectId, "VERIFIED");
     revalidatePath("/admin");
     revalidatePath("/projects");
 }
 
 export async function rejectProjectAction(projectId: bigint) {
-    await rejectProject(projectId);
+    await setProjectVerification(projectId, "REJECTED");
     revalidatePath("/admin");
 }

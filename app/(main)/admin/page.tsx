@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
-import { getUnverifiedProjects } from "@/lib/db";
+import { getUnreviewedProjects } from "@/lib/db";
 import { notFound } from "next/navigation";
 import PageHeading from "@/components/PageHeading";
 import AdminVerificationQueue from "@/components/AdminVerificationQueue";
@@ -9,13 +9,14 @@ import AdminVerificationQueue from "@/components/AdminVerificationQueue";
 export const metadata: Metadata = { title: "Admin" };
 
 async function VerificationQueue() {
-    const projects = await getUnverifiedProjects();
+    const projects = await getUnreviewedProjects();
 
     const serialized = projects.map((p) => ({
         id: p.id.toString(),
         title: p.title,
         description: p.description,
         difficulty: p.difficulty,
+        verification: p.verification,
         repoOwner: p.repoOwner,
         repoName: p.repoName,
         issueNumber: p.issueNumber,
