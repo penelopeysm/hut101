@@ -35,7 +35,6 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
         notFound();
     }
 
-    const isMentor = isCreator;
     const status = projectStatus(project);
     const canSignUp = status === "open" && userId !== null && userId !== project.mentorId && project.verification === "VERIFIED";
 
@@ -57,7 +56,7 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
             )}
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="font-serif text-3xl">{project.title}</h1>
-                {isMentor && (
+                {((isCreator && session?.user.role === "MENTOR") || (isCreator && project.verification !== "VERIFIED") || isAdmin) && (
                     <Link
                         href={`/projects/${project.id}/edit`}
                         className="text-sm text-accent hover:text-accent-hover transition-colors"

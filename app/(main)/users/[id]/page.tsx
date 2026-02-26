@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import DifficultyBadge from "@/components/DifficultyBadge";
+import MentoringProjectCard from "@/components/MentoringProjectCard";
 import EditContactEmail from "@/components/EditContactEmail";
 import { formatDateAsDaysInPast } from "@/lib/utils";
 
@@ -86,7 +87,7 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                     <p className="text-muted text-sm">
                         {isOwnProfile ? (
                             <>You haven&rsquo;t submitted any projects yet.{" "}
-                            <Link href="/submit" className="text-accent hover:underline">Submit one?</Link></>
+                                <Link href="/submit" className="text-accent hover:underline">Submit one?</Link></>
                         ) : (
                             "No projects yet."
                         )}
@@ -94,57 +95,12 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                 ) : (
                     <div className="grid gap-3">
                         {mentoring.map((project) => (
-                            <div
+                            <MentoringProjectCard
                                 key={project.id.toString()}
-                                className="bg-card border border-border rounded-lg p-4"
-                            >
-                                <div className="flex flex-wrap items-baseline gap-2 mb-1">
-                                    <Link
-                                        href={`/projects/${project.id}`}
-                                        className="font-medium hover:text-accent hover:underline transition-colors"
-                                    >
-                                        {project.title}
-                                    </Link>
-                                    <DifficultyBadge difficulty={project.difficulty} />
-                                    {isOwnProfile && project.verification === "PENDING" && (
-                                        <span className="text-xs text-amber-600 dark:text-amber-400">(pending verification)</span>
-                                    )}
-                                    {isOwnProfile && project.verification === "REJECTED" && (
-                                        <span className="text-xs text-red-600 dark:text-red-400">(rejected)</span>
-                                    )}
-                                    {isOwnProfile && (
-                                        <Link
-                                            href={`/projects/${project.id}/edit`}
-                                            className="ml-auto text-sm text-accent hover:underline"
-                                        >
-                                            Edit
-                                        </Link>
-                                    )}
-                                </div>
-                                <div className="text-sm text-muted flex flex-wrap gap-2">
-                                    <span>{formatDateAsDaysInPast(project.createdAt)}</span>
-                                    {project.student ? (
-                                        <span>· Student: <Link href={`/users/${project.student.id}`} className="text-accent hover:underline transition-colors">@{project.student.githubUsername}</Link></span>
-                                    ) : (
-                                        <span>· No student yet</span>
-                                    )}
-                                    {project.completedAt && (
-                                        <span className="text-emerald-600 dark:text-emerald-400">· Completed</span>
-                                    )}
-                                </div>
-                                {project.technologies.length > 0 && (
-                                    <div className="flex flex-wrap gap-1.5 mt-2">
-                                        {project.technologies.map((pt) => (
-                                            <span
-                                                key={pt.technology.name}
-                                                className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
-                                            >
-                                                {pt.technology.name}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                                project={project}
+                                showEditControls={isOwnProfile}
+                                canEdit={isOwnProfile && (session?.user.role !== "STUDENT" || project.verification !== "VERIFIED")}
+                            />
                         ))}
                     </div>
                 )}
@@ -160,7 +116,7 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                     <p className="text-muted text-sm">
                         {isOwnProfile ? (
                             <>You haven&rsquo;t signed up for any projects yet.{" "}
-                            <Link href="/projects" className="text-accent hover:underline">Browse projects?</Link></>
+                                <Link href="/projects" className="text-accent hover:underline">Browse projects?</Link></>
                         ) : (
                             "No projects yet."
                         )}

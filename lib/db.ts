@@ -195,6 +195,11 @@ export async function updateProject(
         throw new Error("You can only edit your own projects");
     }
 
+    const role = session.user.role as UserRole;
+    if (project.verification === "VERIFIED" && role === "STUDENT") {
+        throw new Error("Verified projects can only be edited by mentors or admins");
+    }
+
     const technologies = technologyNames.length > 0
         ? await prisma.technology.findMany({ where: { name: { in: technologyNames } } })
         : [];
