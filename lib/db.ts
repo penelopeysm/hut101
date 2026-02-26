@@ -1,13 +1,14 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import type { Difficulty } from "@/lib/generated/client";
+import type { Difficulty, UserRole } from "@/lib/generated/client";
 
 export async function getUsers() {
     return await prisma.user.findMany();
 }
 
-export async function getProjects() {
+export async function getVerifiedProjects() {
     return await prisma.project.findMany({
+        where: { verification: "VERIFIED" },
         include: {
             mentor: true,
             technologies: {
@@ -144,6 +145,9 @@ export async function signUpForProject(projectId: bigint) {
     if (project.completedAt !== null) {
         throw new Error("This project has already been completed");
     }
+    if (project.verification !== "VERIFIED") {
+        throw new Error("This project has not been verified yet");
+    }
 
     await prisma.$transaction([
         prisma.project.update({
@@ -191,6 +195,11 @@ export async function updateProject(
         throw new Error("You can only edit your own projects");
     }
 
+    const role = session.user.role as UserRole;
+    if (project.verification === "VERIFIED" && role === "MEMBER") {
+        throw new Error("Verified projects can only be edited by trusted users or admins");
+    }
+
     const technologies = technologyNames.length > 0
         ? await prisma.technology.findMany({ where: { name: { in: technologyNames } } })
         : [];
@@ -212,7 +221,7 @@ export async function updateProject(
     ]);
 }
 
-export async function submitProjectAsMentor(
+export async function submitProject(
     title: string,
     description: string,
     repoOwner: string,
@@ -220,12 +229,16 @@ export async function submitProjectAsMentor(
     issueNumber: number,
     difficulty: Difficulty,
     technologyNames: string[],
+    mentorJobRole: string | null,
+    mentorTimeCommitment: string | null,
 ) {
     const session = await auth();
     if (!session) {
         throw new Error("Not authenticated");
     }
-    const mentorId = BigInt(session.user.id);
+    const userId = BigInt(session.user.id);
+    const role = session.user.role as UserRole;
+    const autoVerify = role === "TRUSTED" || role === "ADMIN";
 
     const project = await prisma.project.create({
         data: {
@@ -235,8 +248,11 @@ export async function submitProjectAsMentor(
             repoName,
             issueNumber,
             difficulty,
+            mentorJobRole,
+            mentorTimeCommitment,
+            verification: autoVerify ? "VERIFIED" : "PENDING",
             mentor: {
-                connect: { id: mentorId },
+                connect: { id: userId },
             },
         },
     });
@@ -253,13 +269,64 @@ export async function submitProjectAsMentor(
         });
     }
 
-    await prisma.projectEvent.create({
-        data: {
-            type: "CREATED",
-            projectId: project.id,
-            actorId: mentorId,
+    const events = [
+        prisma.projectEvent.create({
+            data: {
+                type: "CREATED",
+                projectId: project.id,
+                actorId: userId,
+            },
+        }),
+    ];
+    if (autoVerify) {
+        events.push(
+            prisma.projectEvent.create({
+                data: {
+                    type: "VERIFIED",
+                    projectId: project.id,
+                    actorId: userId,
+                },
+            }),
+        );
+    }
+    await prisma.$transaction(events);
+
+    return { project, autoVerified: autoVerify };
+}
+
+export async function getUnreviewedProjects() {
+    return await prisma.project.findMany({
+        where: { verification: { in: ["PENDING", "REJECTED"] } },
+        orderBy: { createdAt: "asc" },
+        include: {
+            mentor: true,
+            technologies: {
+                include: {
+                    technology: true,
+                },
+            },
         },
     });
+}
 
-    return project;
+export async function setProjectVerification(projectId: bigint, status: "VERIFIED" | "REJECTED") {
+    const session = await auth();
+    if (!session || session.user.role !== "ADMIN") {
+        throw new Error("Not authorized");
+    }
+    const adminId = BigInt(session.user.id);
+
+    await prisma.$transaction([
+        prisma.project.update({
+            where: { id: projectId },
+            data: { verification: status },
+        }),
+        prisma.projectEvent.create({
+            data: {
+                type: status,
+                projectId,
+                actorId: adminId,
+            },
+        }),
+    ]);
 }

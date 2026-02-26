@@ -9,6 +9,7 @@ interface TopMenuUser {
     id: bigint;
     githubPicture: string;
     githubUsername: string;
+    role: string;
 }
 
 interface TopMenuProps {
@@ -42,6 +43,11 @@ export default function TopMenu({ user }: TopMenuProps) {
                             <Link href="/submit" className="text-muted hover:text-foreground transition-colors">
                                 Submit a Project
                             </Link>
+                            {user.role === "ADMIN" && (
+                                <Link href="/admin" className="text-muted hover:text-foreground transition-colors">
+                                    Admin
+                                </Link>
+                            )}
                             <Link href={`/users/${user.id}`} className="text-muted hover:text-foreground transition-colors">
                                 My Profile
                             </Link>
@@ -105,6 +111,11 @@ export default function TopMenu({ user }: TopMenuProps) {
                             <Link href="/submit" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
                                 Submit a Project
                             </Link>
+                            {user.role === "ADMIN" && (
+                                <Link href="/admin" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                                    Admin
+                                </Link>
+                            )}
                             <Link href={`/users/${user.id}`} onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
                                 My Profile
                             </Link>

@@ -8,7 +8,7 @@ import { inputClass, buttonClass } from "@/lib/styles";
 
 type Technology = { id: bigint; name: string };
 
-export default function SubmitForm({ technologies }: { technologies: Technology[] }) {
+export default function SubmitForm({ technologies, isMember }: { technologies: Technology[]; isMember: boolean }) {
     const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);
 
     // key forces React to re-mount the form when state changes,
@@ -87,6 +87,38 @@ export default function SubmitForm({ technologies }: { technologies: Technology[
                     defaultSelected={state?.fields?.technologies}
                 />
             </div>
+
+            {isMember && (
+                <>
+                    <div>
+                        <label htmlFor="mentorJobRole" className="block text-sm font-medium mb-1">
+                            What is your current job role?
+                        </label>
+                        <textarea
+                            id="mentorJobRole"
+                            name="mentorJobRole"
+                            required
+                            rows={3}
+                            defaultValue={state?.fields?.mentorJobRole ?? ""}
+                            className={inputClass}
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="mentorTimeCommitment" className="block text-sm font-medium mb-1">
+                            How much time can you commit to mentoring?
+                        </label>
+                        <textarea
+                            id="mentorTimeCommitment"
+                            name="mentorTimeCommitment"
+                            required
+                            rows={3}
+                            defaultValue={state?.fields?.mentorTimeCommitment ?? ""}
+                            className={inputClass}
+                        />
+                    </div>
+                </>
+            )}
 
             <button
                 type="submit"

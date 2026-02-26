@@ -31,6 +31,10 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         redirect(`/projects/${id}`);
     }
 
+    if (project.verification === "VERIFIED" && session.user.role === "MEMBER") {
+        redirect(`/projects/${id}`);
+    }
+
     const technologies = await getTechnologies();
 
     const projectData = {
