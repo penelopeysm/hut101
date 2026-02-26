@@ -23,6 +23,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                 <label htmlFor="title" className="block text-sm font-medium mb-1">
                     Title
                 </label>
+                <p className="text-xs text-muted mb-1.5">
+                    A short, descriptive name for the task. This is what students will see when browsing projects.
+                </p>
                 <input
                     id="title"
                     name="title"
@@ -36,6 +39,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                 <label htmlFor="description" className="block text-sm font-medium mb-1">
                     Description
                 </label>
+                <p className="text-xs text-muted mb-1.5">
+                    Explain what the task involves and what a student would need to do.
+                    Remember that students may have less context about the project, its tooling, and its codebase than you do.
+                </p>
                 <textarea
                     id="description"
                     name="description"
@@ -50,6 +57,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                 <label htmlFor="githubIssue" className="block text-sm font-medium mb-1">
                     GitHub issue link
                 </label>
+                <p className="text-xs text-muted mb-1.5">
+                    Link to the issue on the project&rsquo;s repository.
+                </p>
                 <input
                     id="githubIssue"
                     name="githubIssue"
@@ -64,6 +74,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                 <label htmlFor="difficulty" className="block text-sm font-medium mb-1">
                     Difficulty
                 </label>
+                <p className="text-xs text-muted mb-1.5">
+                    How long would this take you to do yourself?
+                </p>
                 <select
                     id="difficulty"
                     name="difficulty"
@@ -72,9 +85,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                     className={inputClass}
                 >
                     <option value="">Select difficulty</option>
-                    <option value="EASY">Easy</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HARD">Hard</option>
+                    <option value="EASY">Easy — ~10 minutes for me</option>
+                    <option value="MEDIUM">Medium — under an hour for me</option>
+                    <option value="HARD">Hard — a couple of hours for me</option>
                 </select>
             </div>
 
@@ -82,6 +95,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                 <label className="block text-sm font-medium mb-1">
                     Technologies
                 </label>
+                <p className="text-xs text-muted mb-1.5">
+                    Select the main languages or tools a student would need to use.
+                </p>
                 <TechnologyPicker
                     technologies={technologies}
                     defaultSelected={state?.fields?.technologies}
@@ -94,6 +110,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                         <label htmlFor="mentorJobRole" className="block text-sm font-medium mb-1">
                             What is your current job role?
                         </label>
+                        <p className="text-xs text-muted mb-1.5">
+                            This helps us verify that you have the background to mentor on this project.
+                        </p>
                         <textarea
                             id="mentorJobRole"
                             name="mentorJobRole"
@@ -108,6 +127,9 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                         <label htmlFor="mentorTimeCommitment" className="block text-sm font-medium mb-1">
                             How much time can you commit to mentoring?
                         </label>
+                        <p className="text-xs text-muted mb-1.5">
+                            We recommend 2&ndash;3 contact hours total: an initial meeting, a check-in before the PR, and a wrap-up discussion.
+                        </p>
                         <textarea
                             id="mentorTimeCommitment"
                             name="mentorTimeCommitment"
