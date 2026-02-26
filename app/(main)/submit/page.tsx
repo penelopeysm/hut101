@@ -18,7 +18,7 @@ export default async function Page() {
     return (
         <>
             <PageHeading>Submit a new project</PageHeading>
-            <SubmitForm technologies={technologies} isStudent={session.user.role === "STUDENT"} />
+            <SubmitForm technologies={technologies} isMember={session.user.role === "MEMBER"} />
         </>
     );
 }

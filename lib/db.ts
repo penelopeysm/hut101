@@ -196,8 +196,8 @@ export async function updateProject(
     }
 
     const role = session.user.role as UserRole;
-    if (project.verification === "VERIFIED" && role === "STUDENT") {
-        throw new Error("Verified projects can only be edited by mentors or admins");
+    if (project.verification === "VERIFIED" && role === "MEMBER") {
+        throw new Error("Verified projects can only be edited by trusted users or admins");
     }
 
     const technologies = technologyNames.length > 0
@@ -238,7 +238,7 @@ export async function submitProject(
     }
     const userId = BigInt(session.user.id);
     const role = session.user.role as UserRole;
-    const autoVerify = role === "MENTOR" || role === "ADMIN";
+    const autoVerify = role === "TRUSTED" || role === "ADMIN";
 
     const project = await prisma.project.create({
         data: {

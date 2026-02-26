@@ -99,7 +99,7 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                                 key={project.id.toString()}
                                 project={project}
                                 showEditControls={isOwnProfile}
-                                canEdit={isOwnProfile && (session?.user.role !== "STUDENT" || project.verification !== "VERIFIED")}
+                                canEdit={isOwnProfile && (session?.user.role !== "MEMBER" || project.verification !== "VERIFIED")}
                             />
                         ))}
                     </div>

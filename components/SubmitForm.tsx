@@ -8,7 +8,7 @@ import { inputClass, buttonClass } from "@/lib/styles";
 
 type Technology = { id: bigint; name: string };
 
-export default function SubmitForm({ technologies, isStudent }: { technologies: Technology[]; isStudent: boolean }) {
+export default function SubmitForm({ technologies, isMember }: { technologies: Technology[]; isMember: boolean }) {
     const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);
 
     // key forces React to re-mount the form when state changes,
@@ -88,7 +88,7 @@ export default function SubmitForm({ technologies, isStudent }: { technologies: 
                 />
             </div>
 
-            {isStudent && (
+            {isMember && (
                 <>
                     <div>
                         <label htmlFor="mentorJobRole" className="block text-sm font-medium mb-1">

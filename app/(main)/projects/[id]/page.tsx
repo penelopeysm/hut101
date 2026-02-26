@@ -56,7 +56,7 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
             )}
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="font-serif text-3xl">{project.title}</h1>
-                {((isCreator && session?.user.role === "MENTOR") || (isCreator && project.verification !== "VERIFIED") || isAdmin) && (
+                {((isCreator && session?.user.role === "TRUSTED") || (isCreator && project.verification !== "VERIFIED") || isAdmin) && (
                     <Link
                         href={`/projects/${project.id}/edit`}
                         className="text-sm text-accent hover:text-accent-hover transition-colors"

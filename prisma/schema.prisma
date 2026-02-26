@@ -27,8 +27,8 @@ enum VerificationStatus {
 
 enum UserRole {
   ADMIN
-  MENTOR
-  STUDENT
+  TRUSTED
+  MEMBER
 }
 
 model User {
@@ -40,7 +40,7 @@ model User {
   contactEmail    String?
   confirmedOver18 Boolean  @default(false)
   lastLoginAt     DateTime @default(now())
-  role            UserRole @default(STUDENT)
+  role            UserRole @default(MEMBER)
 
   mentorProjects   Project[] @relation("MentorProjects")
   studentProjects  Project[] @relation("StudentProjects")
