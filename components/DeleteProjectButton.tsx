@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
-import { deleteProjectAction } from "@/app/(main)/my-profile/actions";
+import { deleteProjectAction } from "@/lib/actions";
 import { useConfirmAction } from "@/lib/hooks";
 
 export default function DeleteProjectButton({

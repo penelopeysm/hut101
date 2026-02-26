@@ -28,7 +28,7 @@ async function ProjectListLoader() {
         completedAt: p.completedAt?.toISOString() ?? null,
         studentId: serializeBigInt(p.studentId),
         mentorAvailable: p.mentorAvailable,
-        mentor: { githubUsername: p.mentor.githubUsername },
+        mentor: { id: p.mentor.id.toString(), githubUsername: p.mentor.githubUsername },
         technologies: p.technologies.map((pt) => ({
             technology: { name: pt.technology.name },
         })),

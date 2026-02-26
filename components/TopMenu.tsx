@@ -42,13 +42,13 @@ export default function TopMenu({ user }: TopMenuProps) {
                             <Link href="/submit" className="text-muted hover:text-foreground transition-colors">
                                 Submit a Project
                             </Link>
-                            <Link href="/my-profile" className="text-muted hover:text-foreground transition-colors">
+                            <Link href={`/users/${user.id}`} className="text-muted hover:text-foreground transition-colors">
                                 My Profile
                             </Link>
                             <button onClick={() => signOut()} className="cursor-pointer text-muted hover:text-foreground transition-colors">
                                 Logout
                             </button>
-                            <Link href="/my-profile">
+                            <Link href={`/users/${user.id}`}>
                                 <Image
                                     src={user.githubPicture}
                                     alt={`${user.githubUsername}'s avatar`}
@@ -105,7 +105,7 @@ export default function TopMenu({ user }: TopMenuProps) {
                             <Link href="/submit" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
                                 Submit a Project
                             </Link>
-                            <Link href="/my-profile" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                            <Link href={`/users/${user.id}`} onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
                                 My Profile
                             </Link>
                             <button onClick={() => { signOut(); setMenuOpen(false); }} className="cursor-pointer block text-muted hover:text-foreground transition-colors">

@@ -42,6 +42,6 @@ export async function updateContactEmail(email: string): Promise<{ error?: strin
         return { error: "Something went wrong. Please try again." };
     }
 
-    revalidatePath("/my-profile");
+    revalidatePath(`/users/${session.user.id}`);
     return {};
 }

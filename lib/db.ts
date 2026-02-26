@@ -44,18 +44,27 @@ export async function getUser(id: bigint) {
     });
 }
 
-export async function getMyProjects() {
-    const session = await auth();
-    if (!session) {
-        throw new Error("Not authenticated");
-    }
-    const userId = BigInt(session.user.id);
+export async function getUserProfile(userId: bigint) {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            githubUsername: true,
+            githubPicture: true,
+            name: true,
+            confirmedOver18: true,
+        },
+    });
+
+    if (!user) return null;
 
     const [mentoring, studying] = await Promise.all([
         prisma.project.findMany({
             where: { mentorId: userId },
             include: {
-                student: true,
+                student: {
+                    select: { id: true, githubUsername: true },
+                },
                 technologies: {
                     include: { technology: true },
                 },
@@ -65,7 +74,9 @@ export async function getMyProjects() {
         prisma.project.findMany({
             where: { studentId: userId },
             include: {
-                mentor: true,
+                mentor: {
+                    select: { id: true, githubUsername: true },
+                },
                 technologies: {
                     include: { technology: true },
                 },
@@ -74,8 +85,9 @@ export async function getMyProjects() {
         }),
     ]);
 
-    return { mentoring, studying };
+    return { user, mentoring, studying };
 }
+
 
 export async function deleteProject(projectId: bigint) {
     const session = await auth();

@@ -64,7 +64,9 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
             <div className="bg-card border border-border rounded-lg p-5 space-y-3 mb-6">
                 <div className="flex gap-2 text-sm">
                     <span className="text-muted w-20 shrink-0">Mentor</span>
-                    <span>@{project.mentor.githubUsername}</span>
+                    <span>
+                        <Link href={`/users/${project.mentor.id}`} className="text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link>
+                    </span>
                     {!project.mentorAvailable && (
                         <span className="text-amber-600 dark:text-amber-400 text-xs">(currently unavailable)</span>
                     )}
@@ -75,8 +77,8 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
                     <span>
                         {project.student === null
                             ? "No one yet — this project is open!"
-                            : `@${project.student.githubUsername}${session && project.student.id === userId ? " (that's you!)" : ""
-                            }`}
+                            : <><Link href={`/users/${project.student.id}`} className="text-accent hover:underline transition-colors">@{project.student.githubUsername}</Link>{session && project.student.id === userId ? " (that's you!)" : ""}</>
+                        }
                     </span>
                 </div>
 
@@ -120,7 +122,7 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
                                     {event.time.toLocaleDateString()}
                                 </span>
                                 <span>
-                                    @{event.actor.githubUsername} — {event.type.replace(/_/g, " ").toLowerCase()}
+                                    <Link href={`/users/${event.actor.id}`} className="text-accent hover:underline transition-colors">@{event.actor.githubUsername}</Link> — {event.type.replace(/_/g, " ").toLowerCase()}
                                 </span>
                             </div>
                         ))}

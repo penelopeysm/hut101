@@ -21,7 +21,7 @@ type SerializedProject = {
     completedAt: string | null;
     studentId: string | null;
     mentorAvailable: boolean;
-    mentor: { githubUsername: string };
+    mentor: { id: string; githubUsername: string };
     technologies: { technology: { name: string } }[];
 };
 
@@ -52,12 +52,15 @@ function ProjectCard({ project }: { project: SerializedProject }) {
     const status = projectStatus(project);
 
     return (
-        <Link
-            href={`/projects/${project.id}`}
-            className="group block bg-card border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+        <div
+            className="group bg-card border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
         >
             <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                <h2 className="text-lg font-semibold group-hover:text-accent transition-colors">{project.title}</h2>
+                <h2 className="text-lg font-semibold">
+                    <Link href={`/projects/${project.id}`} className="group-hover:text-accent transition-colors">
+                        {project.title}
+                    </Link>
+                </h2>
                 <span className={`text-xs font-medium ${STATUS_BADGE[status]}`}>{STATUS_LABEL[status]}</span>
                 <DifficultyBadge difficulty={project.difficulty} />
             </div>
@@ -65,7 +68,7 @@ function ProjectCard({ project }: { project: SerializedProject }) {
             <p className="text-muted mb-4">{project.description}</p>
 
             <div className="flex flex-wrap items-center gap-5 text-sm text-muted mb-3">
-                <span>Mentor: @{project.mentor.githubUsername}</span>
+                <span>Mentor: <Link href={`/users/${project.mentor.id}`} className="text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link></span>
                 <span>{formatDateAsDaysInPast(new Date(project.createdAt))}</span>
                 <span className="text-accent break-all">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
@@ -84,7 +87,7 @@ function ProjectCard({ project }: { project: SerializedProject }) {
                     ))}
                 </div>
             )}
-        </Link>
+        </div>
     );
 }
 

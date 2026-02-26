@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateContactEmail } from "@/app/(main)/my-profile/actions";
+import { updateContactEmail } from "@/lib/actions";
 import ErrorMessage from "@/components/ErrorMessage";
 
 export default function EditContactEmail({ currentEmail }: { currentEmail: string }) {
