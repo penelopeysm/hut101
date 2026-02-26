@@ -33,8 +33,10 @@ async function ProfileContent({ userId }: { userId: bigint }) {
         notFound();
     }
 
-    const { user, mentoring, studying } = profile;
+    const { user, mentoring: allMentoring, studying } = profile;
     const isOwnProfile = session !== null && BigInt(session.user.id) === userId;
+    // On someone else's profile, hide unverified projects
+    const mentoring = isOwnProfile ? allMentoring : allMentoring.filter((p) => p.verification === "VERIFIED");
 
     return (
         <div className="animate-fade-in">
@@ -104,6 +106,12 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                                         {project.title}
                                     </Link>
                                     <DifficultyBadge difficulty={project.difficulty} />
+                                    {isOwnProfile && project.verification === "PENDING" && (
+                                        <span className="text-xs text-amber-600 dark:text-amber-400">(pending verification)</span>
+                                    )}
+                                    {isOwnProfile && project.verification === "REJECTED" && (
+                                        <span className="text-xs text-red-600 dark:text-red-400">(rejected)</span>
+                                    )}
                                     {isOwnProfile && (
                                         <Link
                                             href={`/projects/${project.id}/edit`}

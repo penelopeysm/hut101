@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 export const metadata: Metadata = { title: "Projects" };
-import { getProjects, getTechnologies } from "@/lib/db";
+import { getVerifiedProjects, getTechnologies } from "@/lib/db";
 import PageHeading from "@/components/PageHeading";
 import ProjectList from "@/components/ProjectList";
 
@@ -12,7 +12,7 @@ function serializeBigInt(value: bigint | null): string | null {
 
 async function ProjectListLoader() {
     const [projects, technologies] = await Promise.all([
-        getProjects(),
+        getVerifiedProjects(),
         getTechnologies(),
     ]);
 

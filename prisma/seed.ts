@@ -83,6 +83,7 @@ export async function main() {
             repoName: "FlexiChains.jl",
             issueNumber: 95,
             difficulty: "MEDIUM",
+            verification: "VERIFIED",
             technologies: {
                 create: [
                     { technology: { connect: { name: "Julia" } } },
@@ -102,6 +103,7 @@ export async function main() {
             repoName: "FlexiChains.jl",
             issueNumber: 102,
             difficulty: "HARD",
+            verification: "VERIFIED",
             technologies: {
                 create: [
                     { technology: { connect: { name: "Rust" } } },
@@ -121,6 +123,7 @@ export async function main() {
             repoName: "geo-tools",
             issueNumber: 42,
             difficulty: "MEDIUM",
+            verification: "VERIFIED",
             technologies: {
                 create: [
                     { technology: { connect: { name: "Python" } } },
@@ -141,6 +144,7 @@ export async function main() {
             repoName: "notify-hub",
             issueNumber: 17,
             difficulty: "HARD",
+            verification: "VERIFIED",
             technologies: {
                 create: [
                     { technology: { connect: { name: "TypeScript" } } },
@@ -160,6 +164,7 @@ export async function main() {
             repoName: "geo-tools",
             issueNumber: 55,
             difficulty: "EASY",
+            verification: "VERIFIED",
             technologies: {
                 create: [
                     { technology: { connect: { name: "Python" } } },
@@ -180,9 +185,69 @@ export async function main() {
             repoName: "FlexiChains.jl",
             issueNumber: 78,
             difficulty: "EASY",
+            verification: "VERIFIED",
             technologies: {
                 create: [
                     { technology: { connect: { name: "Go" } } },
+                ],
+            },
+        },
+    });
+
+    // 7. Pending project (student-submitted, awaiting verification)
+    await prisma.project.create({
+        data: {
+            title: "Add dark mode toggle to the settings page",
+            description: "Implement a user-facing toggle on the settings page that switches between light and dark themes. Should persist the preference in localStorage and respect the system default on first visit.",
+            mentor: { connect: { githubId: BigInt(72076688) } },
+            repoOwner: "rwood-97",
+            repoName: "geo-tools",
+            issueNumber: 63,
+            difficulty: "EASY",
+            verification: "PENDING",
+            technologies: {
+                create: [
+                    { technology: { connect: { name: "TypeScript" } } },
+                    { technology: { connect: { name: "CSS" } } },
+                ],
+            },
+        },
+    });
+
+    // 8. Pending project (student-submitted, awaiting verification)
+    await prisma.project.create({
+        data: {
+            title: "Create an interactive API documentation page",
+            description: "Build a Swagger-style interactive docs page that lets users try out API endpoints directly in the browser. Should auto-generate from route definitions and support auth headers.",
+            mentor: { connect: { githubId: BigInt(122629585) } },
+            repoOwner: "penelopeysm",
+            repoName: "FlexiChains.jl",
+            issueNumber: 110,
+            difficulty: "MEDIUM",
+            verification: "PENDING",
+            technologies: {
+                create: [
+                    { technology: { connect: { name: "TypeScript" } } },
+                    { technology: { connect: { name: "HTML" } } },
+                ],
+            },
+        },
+    });
+
+    // 9. Rejected project
+    await prisma.project.create({
+        data: {
+            title: "Rewrite the entire backend in COBOL",
+            description: "Port the full server-side codebase to COBOL for maximum enterprise readiness. This will future-proof the project for the next 60 years of mainframe computing.",
+            mentor: { connect: { githubId: BigInt(72076688) } },
+            repoOwner: "rwood-97",
+            repoName: "geo-tools",
+            issueNumber: 99,
+            difficulty: "HARD",
+            verification: "REJECTED",
+            technologies: {
+                create: [
+                    { technology: { connect: { name: "Shell" } } },
                 ],
             },
         },

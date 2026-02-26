@@ -1,6 +1,6 @@
 "use server";
 
-import { submitProjectAsMentor } from "@/lib/db";
+import { submitProject as submitProjectDb } from "@/lib/db";
 import { redirect } from "next/navigation";
 import type { Difficulty } from "@/lib/generated/client";
 import { parseGitHubIssueLink } from "@/lib/github";
@@ -32,9 +32,9 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
     }
     const { repoOwner, repoName, issueNumber } = parsed;
 
-    let project;
+    let result;
     try {
-        project = await submitProjectAsMentor(
+        result = await submitProjectDb(
             title,
             description,
             repoOwner,
@@ -48,5 +48,6 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
         return { success: false, error: "Something went wrong while submitting. Please try again.", fields };
     }
 
-    redirect(`/projects/${project.id}?new=1`);
+    const query = result.autoVerified ? "?new=1" : "?pending=1";
+    redirect(`/projects/${result.project.id}${query}`);
 }

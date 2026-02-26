@@ -19,7 +19,7 @@ import SuccessBanner from "@/components/SuccessBanner";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import SignUpButton from "@/components/SignUpButton";
 
-async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: boolean }) {
+async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigint; isNew: boolean; isPending: boolean }) {
     const project = await getProject(projectId);
     if (!project) {
         notFound();
@@ -27,15 +27,34 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
 
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
-    const isMentor = userId !== null && userId === project.mentorId;
+    const isAdmin = session?.user.role === "ADMIN";
+    const isCreator = userId !== null && userId === project.mentorId;
+
+    // Visibility gate: unverified projects are only visible to creator and admins
+    if (project.verification !== "VERIFIED" && !isCreator && !isAdmin) {
+        notFound();
+    }
+
+    const isMentor = isCreator;
     const status = projectStatus(project);
-    const canSignUp = status === "open" && userId !== null && userId !== project.mentorId;
+    const canSignUp = status === "open" && userId !== null && userId !== project.mentorId && project.verification === "VERIFIED";
 
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
 
     return (
         <div className="animate-fade-in">
             {isNew && <SuccessBanner message="Project submitted successfully!" />}
+            {isPending && <SuccessBanner message="Project submitted! It will appear on the public list once an admin approves it." />}
+            {project.verification === "PENDING" && isCreator && !isPending && (
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm rounded-md px-4 py-3 mb-6">
+                    This project is pending admin verification and is not yet visible to others.
+                </div>
+            )}
+            {project.verification === "REJECTED" && isCreator && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-sm rounded-md px-4 py-3 mb-6">
+                    This project was not approved by an admin and is not visible to others.
+                </div>
+            )}
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="font-serif text-3xl">{project.title}</h1>
                 {isMentor && (
@@ -133,7 +152,7 @@ async function ProjectDetail({ projectId, isNew }: { projectId: bigint; isNew: b
     );
 }
 
-export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string; pending?: string }> }) {
     const { id } = await params;
     let projectId: bigint;
     try {
@@ -142,7 +161,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         notFound();
     }
 
-    const { new: isNew } = await searchParams;
+    const { new: isNew, pending } = await searchParams;
 
     return (
         <div className="max-w-2xl">
@@ -150,7 +169,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 &larr; All projects
             </Link>
             <Suspense fallback={<p role="status" className="text-muted">Loading project...</p>}>
-                <ProjectDetail projectId={projectId} isNew={!!isNew} />
+                <ProjectDetail projectId={projectId} isNew={!!isNew} isPending={!!pending} />
             </Suspense>
         </div>
     );

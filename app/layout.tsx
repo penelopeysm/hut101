@@ -38,6 +38,7 @@ export default async function RootLayout({
         id: session.user.id,
         githubPicture: session.user.githubPicture,
         githubUsername: session.user.githubUsername,
+        role: session.user.role,
     } : null;
 
     return (

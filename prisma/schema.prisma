@@ -19,6 +19,12 @@ enum Difficulty {
   HARD
 }
 
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 enum UserRole {
   ADMIN
   MENTOR
@@ -52,6 +58,7 @@ model Project {
   issueNumber Int
 
   difficulty Difficulty
+  verification VerificationStatus @default(PENDING)
 
   technologies ProjectTechnology[]
 
@@ -91,6 +98,8 @@ enum ProjectEventType {
   MENTOR_MARKED_AVAILABLE
   MENTOR_MARKED_UNAVAILABLE
   COMPLETED
+  VERIFIED
+  REJECTED
 }
 
 model ProjectEvent {
