@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getProject } from "@/lib/db";
+import { getProject, getActiveStudentProjectCount, MAX_ACTIVE_STUDENT_PROJECTS } from "@/lib/db";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
@@ -124,7 +124,11 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
 
             {canSignUp && (
                 <div className="mb-8">
-                    <SignUpButton projectId={project.id} />
+                    <SignUpButton
+                        projectId={project.id}
+                        activeCount={await getActiveStudentProjectCount(userId!)}
+                        maxActive={MAX_ACTIVE_STUDENT_PROJECTS}
+                    />
                 </div>
             )}
 
