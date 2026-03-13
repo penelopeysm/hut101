@@ -32,5 +32,6 @@ declare module "next-auth/jwt" {
         githubUsername: string,
         contactEmail: string | null,
         role: string,
+        accessToken?: string,
     }
 }
