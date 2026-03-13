@@ -23,7 +23,7 @@ const filterLabels: Record<Filter, string> = {
 };
 
 function needsVerification(p: AdminProject) {
-    return (p.verification === "PENDING" || p.verification === "REJECTED") && !p.deletedAt;
+    return p.verification === "PENDING" && !p.deletedAt;
 }
 
 function filterProjects(projects: AdminProject[], filter: Filter): AdminProject[] {
@@ -39,6 +39,7 @@ function filterProjects(projects: AdminProject[], filter: Filter): AdminProject[
 
 const badgeBase = "text-xs font-medium px-1.5 py-0.5 rounded";
 const badgeColors: Record<string, string> = {
+    DRAFT: "bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400",
     DELETED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     VERIFIED: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
     PENDING: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
@@ -56,6 +57,8 @@ function VerificationBadge({ status, deletedAt }: { status: string; deletedAt: s
 export default function AdminProjectTable({ projects }: { projects: AdminProject[] }) {
     const [filter, setFilter] = useState<Filter>("all");
     const [isPending, startTransition] = useTransition();
+    const [rejectingId, setRejectingId] = useState<string | null>(null);
+    const [rejectComment, setRejectComment] = useState("");
 
     const filtered = filterProjects(projects, filter);
 
@@ -65,9 +68,22 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
         });
     }
 
-    function handleReject(projectId: string) {
+    function handleRejectStart(projectId: string) {
+        setRejectingId(projectId);
+        setRejectComment("");
+    }
+
+    function handleRejectCancel() {
+        setRejectingId(null);
+        setRejectComment("");
+    }
+
+    function handleRejectConfirm(projectId: string) {
+        if (!rejectComment.trim()) return;
         startTransition(async () => {
-            await rejectProjectAction(BigInt(projectId));
+            await rejectProjectAction(BigInt(projectId), rejectComment);
+            setRejectingId(null);
+            setRejectComment("");
         });
     }
 
@@ -144,7 +160,7 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
                                         {new Date(p.createdAt).toLocaleDateString()}
                                     </td>
                                     <td className="px-3 py-2">
-                                        {needsVerification(p) && (
+                                        {p.verification === "PENDING" && !p.deletedAt && (
                                             <div className="flex gap-1.5">
                                                 <button
                                                     onClick={() => handleVerify(p.id)}
@@ -153,9 +169,9 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
                                                 >
                                                     Approve
                                                 </button>
-                                                {p.verification === "PENDING" && (
+                                                {rejectingId !== p.id && (
                                                     <button
-                                                        onClick={() => handleReject(p.id)}
+                                                        onClick={() => handleRejectStart(p.id)}
                                                         disabled={isPending}
                                                         className="cursor-pointer text-xs font-medium px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50"
                                                     >
@@ -171,6 +187,37 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
                     </tbody>
                 </table>
             </div>
+
+            {rejectingId && (
+                <div className="mt-3 border border-border rounded-lg p-4 bg-card">
+                    <p className="text-sm font-medium mb-2">
+                        Rejection feedback for &ldquo;{projects.find((p) => p.id === rejectingId)?.title}&rdquo;
+                    </p>
+                    <textarea
+                        value={rejectComment}
+                        onChange={(e) => setRejectComment(e.target.value)}
+                        placeholder="Explain what changes are needed..."
+                        rows={3}
+                        className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent mb-2"
+                    />
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => handleRejectConfirm(rejectingId)}
+                            disabled={isPending || !rejectComment.trim()}
+                            className="cursor-pointer text-xs font-medium px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isPending ? "Rejecting..." : "Confirm rejection"}
+                        </button>
+                        <button
+                            onClick={handleRejectCancel}
+                            disabled={isPending}
+                            className="cursor-pointer text-xs font-medium px-3 py-1.5 rounded border border-border text-muted hover:text-foreground transition-colors disabled:opacity-50"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
