@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import type { Difficulty, UserRole } from "@/lib/generated/client";
 
+export const MAX_ACTIVE_STUDENT_PROJECTS = 2;
+
 export async function getUsers() {
     return await prisma.user.findMany();
 }
@@ -119,6 +121,12 @@ export async function deleteProject(projectId: bigint) {
     ]);
 }
 
+export async function getActiveStudentProjectCount(userId: bigint) {
+    return await prisma.project.count({
+        where: { studentId: userId, completedAt: null },
+    });
+}
+
 export async function signUpForProject(projectId: bigint) {
     const session = await auth();
     if (!session) {
@@ -126,42 +134,51 @@ export async function signUpForProject(projectId: bigint) {
     }
     const userId = BigInt(session.user.id);
 
-    const project = await prisma.project.findUnique({
-        where: { id: projectId },
-    });
+    await prisma.$transaction(async (tx) => {
+        const activeCount = await tx.project.count({
+            where: { studentId: userId, completedAt: null },
+        });
+        if (activeCount >= MAX_ACTIVE_STUDENT_PROJECTS) {
+            throw new Error(
+                `You can only be signed up for ${MAX_ACTIVE_STUDENT_PROJECTS} projects at a time`,
+            );
+        }
 
-    if (!project) {
-        throw new Error("Project not found");
-    }
-    if (project.mentorId === userId) {
-        throw new Error("You can't sign up for your own project");
-    }
-    if (project.studentId !== null) {
-        throw new Error("This project already has a student");
-    }
-    if (!project.mentorAvailable) {
-        throw new Error("The mentor is currently unavailable for this project");
-    }
-    if (project.completedAt !== null) {
-        throw new Error("This project has already been completed");
-    }
-    if (project.verification !== "VERIFIED") {
-        throw new Error("This project has not been verified yet");
-    }
+        const project = await tx.project.findUnique({
+            where: { id: projectId },
+        });
 
-    await prisma.$transaction([
-        prisma.project.update({
+        if (!project) {
+            throw new Error("Project not found");
+        }
+        if (project.mentorId === userId) {
+            throw new Error("You can't sign up for your own project");
+        }
+        if (project.studentId !== null) {
+            throw new Error("This project already has a student");
+        }
+        if (!project.mentorAvailable) {
+            throw new Error("The mentor is currently unavailable for this project");
+        }
+        if (project.completedAt !== null) {
+            throw new Error("This project has already been completed");
+        }
+        if (project.verification !== "VERIFIED") {
+            throw new Error("This project has not been verified yet");
+        }
+
+        await tx.project.update({
             where: { id: projectId },
             data: { studentId: userId },
-        }),
-        prisma.projectEvent.create({
+        });
+        await tx.projectEvent.create({
             data: {
                 type: "STUDENT_ASSIGNED",
                 projectId,
                 actorId: userId,
             },
-        }),
-    ]);
+        });
+    });
 }
 
 export async function getTechnologies() {

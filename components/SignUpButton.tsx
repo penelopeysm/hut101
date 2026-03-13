@@ -4,7 +4,8 @@ import { signUpAction } from "@/app/(main)/projects/[id]/actions";
 import { useConfirmAction } from "@/lib/hooks";
 import ErrorMessage from "@/components/ErrorMessage";
 
-export default function SignUpButton({ projectId }: { projectId: bigint }) {
+export default function SignUpButton({ projectId, activeCount, maxActive }: { projectId: bigint; activeCount: number; maxActive: number }) {
+    const atCap = activeCount >= maxActive;
     const { confirming, startConfirming, cancelConfirming, confirm, error, isPending } =
         useConfirmAction(() => signUpAction(projectId));
 
@@ -29,14 +30,23 @@ export default function SignUpButton({ projectId }: { projectId: bigint }) {
                     </button>
                 </div>
             ) : (
-                <div>
+                <div className="flex flex-col items-start gap-3">
                     {error && <ErrorMessage message={error} />}
                     <button
+                        disabled={atCap}
                         onClick={startConfirming}
-                        className="cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
+                        className={atCap
+                            ? "bg-muted/20 text-muted px-4 py-2 rounded-md text-sm font-medium cursor-not-allowed"
+                            : "cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
+                        }
                     >
                         Sign up for this project
                     </button>
+                    {atCap && (
+                        <p className="text-sm text-muted">
+                            You can only be signed up for {maxActive} projects at a time
+                        </p>
+                    )}
                 </div>
             )}
         </div>
