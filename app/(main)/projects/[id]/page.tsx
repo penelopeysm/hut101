@@ -65,7 +65,7 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
             {project.verification === "REJECTED" && isCreator && (
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm rounded-md px-4 py-3 mb-6">
                     <p className="font-medium mb-1">Changes requested</p>
-                    <p className="mb-3">Please review the feedback below and resubmit when ready.</p>
+                    <p className="mb-3">Please review the feedback below, edit your project as needed, and resubmit when ready.</p>
                     {feedback.length > 0 && (
                         <div className="space-y-2 mb-3">
                             {feedback.map((f) => (
@@ -179,13 +179,18 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
                     </h2>
                     <div className="space-y-2">
                         {project.events.map((event) => (
-                            <div key={event.id.toString()} className="flex gap-2 text-sm text-muted">
-                                <span className="shrink-0">
-                                    {event.time.toLocaleDateString()}
-                                </span>
-                                <span>
-                                    <Link href={`/users/${event.actor.id}`} className="text-accent hover:underline transition-colors">@{event.actor.githubUsername}</Link> — {event.type.replace(/_/g, " ").toLowerCase()}
-                                </span>
+                            <div key={event.id.toString()} className="text-sm text-muted">
+                                <div className="flex gap-2">
+                                    <span className="shrink-0">
+                                        {event.time.toLocaleDateString()}
+                                    </span>
+                                    <span>
+                                        <Link href={`/users/${event.actor.id}`} className="text-accent hover:underline transition-colors">@{event.actor.githubUsername}</Link> — {event.type === "REJECTED" ? "requested changes" : event.type.replace(/_/g, " ").toLowerCase()}
+                                    </span>
+                                </div>
+                                {event.comment && (
+                                    <p className="ml-[calc(theme(spacing.2)+10ch)] mt-0.5 text-xs italic">&ldquo;{event.comment}&rdquo;</p>
+                                )}
                             </div>
                         ))}
                     </div>
