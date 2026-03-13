@@ -10,7 +10,7 @@ export async function getUsers() {
 
 export async function getVerifiedProjects() {
     return await prisma.project.findMany({
-        where: { verification: "VERIFIED" },
+        where: { verification: "VERIFIED", deletedAt: null },
         include: {
             mentor: true,
             technologies: {
@@ -23,7 +23,10 @@ export async function getVerifiedProjects() {
 }
 
 export async function getProject(id: bigint) {
-    return await prisma.project.findUnique({
+    const session = await auth();
+    const isAdmin = session?.user?.role === "ADMIN";
+
+    const project = await prisma.project.findUnique({
         where: { id },
         include: {
             mentor: true,
@@ -39,6 +42,12 @@ export async function getProject(id: bigint) {
             },
         },
     });
+
+    if (project?.deletedAt && !isAdmin) {
+        return null;
+    }
+
+    return project;
 }
 
 export async function getUser(id: bigint) {
@@ -63,7 +72,7 @@ export async function getUserProfile(userId: bigint) {
 
     const [mentoring, studying] = await Promise.all([
         prisma.project.findMany({
-            where: { mentorId: userId },
+            where: { mentorId: userId, deletedAt: null },
             include: {
                 student: {
                     select: { id: true, githubUsername: true },
@@ -75,7 +84,7 @@ export async function getUserProfile(userId: bigint) {
             orderBy: { createdAt: "desc" },
         }),
         prisma.project.findMany({
-            where: { studentId: userId },
+            where: { studentId: userId, deletedAt: null },
             include: {
                 mentor: {
                     select: { id: true, githubUsername: true },
@@ -113,12 +122,10 @@ export async function deleteProject(projectId: bigint) {
         throw new Error("Cannot delete a project that has a student assigned");
     }
 
-    // Delete related records first, then the project
-    await prisma.$transaction([
-        prisma.projectTechnology.deleteMany({ where: { projectId } }),
-        prisma.projectEvent.deleteMany({ where: { projectId } }),
-        prisma.project.delete({ where: { id: projectId } }),
-    ]);
+    await prisma.project.update({
+        where: { id: projectId },
+        data: { deletedAt: new Date() },
+    });
 }
 
 export async function getActiveStudentProjectCount(userId: bigint) {
@@ -150,6 +157,9 @@ export async function signUpForProject(projectId: bigint) {
 
         if (!project) {
             throw new Error("Project not found");
+        }
+        if (project.deletedAt) {
+            throw new Error("This project has been deleted");
         }
         if (project.mentorId === userId) {
             throw new Error("You can't sign up for your own project");
@@ -210,6 +220,9 @@ export async function updateProject(
     }
     if (project.mentorId !== userId) {
         throw new Error("You can only edit your own projects");
+    }
+    if (project.deletedAt) {
+        throw new Error("Cannot edit a deleted project");
     }
 
     const role = session.user.role as UserRole;
@@ -313,7 +326,7 @@ export async function submitProject(
 
 export async function getUnreviewedProjects() {
     return await prisma.project.findMany({
-        where: { verification: { in: ["PENDING", "REJECTED"] } },
+        where: { verification: { in: ["PENDING", "REJECTED"] }, deletedAt: null },
         orderBy: { createdAt: "asc" },
         include: {
             mentor: true,

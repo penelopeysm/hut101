@@ -55,6 +55,11 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
                     This project was not approved by an admin and is not visible to others.
                 </div>
             )}
+            {project.deletedAt && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-sm rounded-md px-4 py-3 mb-6">
+                    This project was deleted on {project.deletedAt.toLocaleDateString()} and is no longer visible to users.
+                </div>
+            )}
             <div className="flex items-baseline justify-between gap-4 mb-4">
                 <h1 className="font-serif text-3xl">{project.title}</h1>
                 {((isCreator && session?.user.role === "TRUSTED") || (isCreator && project.verification !== "VERIFIED") || isAdmin) && (

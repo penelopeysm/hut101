@@ -252,6 +252,26 @@ export async function main() {
             },
         },
     });
+    // 10. Soft-deleted project (should only be visible to admins)
+    await prisma.project.create({
+        data: {
+            title: "Set up automated performance benchmarking",
+            description: "Create a CI pipeline that runs performance benchmarks on every PR and compares against the main branch. Should flag regressions above a configurable threshold.",
+            mentor: { connect: { githubId: BigInt(122629585) } },
+            repoOwner: "penelopeysm",
+            repoName: "FlexiChains.jl",
+            issueNumber: 88,
+            difficulty: "MEDIUM",
+            verification: "VERIFIED",
+            deletedAt: new Date("2026-02-15"),
+            technologies: {
+                create: [
+                    { technology: { connect: { name: "Shell" } } },
+                    { technology: { connect: { name: "Docker" } } },
+                ],
+            },
+        },
+    });
 }
 
 main();

@@ -72,6 +72,7 @@ model Project {
   student   User?    @relation("StudentProjects", fields: [studentId], references: [id])
 
   completedAt DateTime?
+  deletedAt   DateTime?
 
   events   ProjectEvent[]
 }
