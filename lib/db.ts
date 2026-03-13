@@ -258,6 +258,7 @@ export async function submitProject(
     technologyNames: string[],
     mentorJobRole: string | null,
     mentorTimeCommitment: string | null,
+    submitForReview: boolean,
 ) {
     const session = await auth();
     if (!session) {
@@ -266,6 +267,12 @@ export async function submitProject(
     const userId = BigInt(session.user.id);
     const role = session.user.role as UserRole;
     const autoVerify = role === "TRUSTED" || role === "ADMIN";
+
+    const verification = autoVerify
+        ? "VERIFIED"
+        : submitForReview
+            ? "PENDING"
+            : "DRAFT";
 
     const project = await prisma.project.create({
         data: {
@@ -277,7 +284,7 @@ export async function submitProject(
             difficulty,
             mentorJobRole,
             mentorTimeCommitment,
-            verification: autoVerify ? "VERIFIED" : "PENDING",
+            verification,
             mentor: {
                 connect: { id: userId },
             },
@@ -315,10 +322,20 @@ export async function submitProject(
                 },
             }),
         );
+    } else if (submitForReview) {
+        events.push(
+            prisma.projectEvent.create({
+                data: {
+                    type: "SUBMITTED_FOR_REVIEW",
+                    projectId: project.id,
+                    actorId: userId,
+                },
+            }),
+        );
     }
     await prisma.$transaction(events);
 
-    return { project, autoVerified: autoVerify };
+    return { project, autoVerified: autoVerify, isDraft: verification === "DRAFT" };
 }
 
 export async function getAllProjectsForAdmin() {
@@ -331,7 +348,11 @@ export async function getAllProjectsForAdmin() {
     });
 }
 
-export async function setProjectVerification(projectId: bigint, status: "VERIFIED" | "REJECTED") {
+export async function setProjectVerification(
+    projectId: bigint,
+    status: "VERIFIED" | "REJECTED",
+    comment?: string,
+) {
     const session = await auth();
     if (!session || session.user.role !== "ADMIN") {
         throw new Error("Not authorized");
@@ -348,7 +369,58 @@ export async function setProjectVerification(projectId: bigint, status: "VERIFIE
                 type: status,
                 projectId,
                 actorId: adminId,
+                comment: status === "REJECTED" ? comment : undefined,
             },
         }),
     ]);
+}
+
+export async function submitProjectForReview(projectId: bigint) {
+    const session = await auth();
+    if (!session) {
+        throw new Error("Not authenticated");
+    }
+    const userId = BigInt(session.user.id);
+
+    const project = await prisma.project.findUnique({
+        where: { id: projectId },
+    });
+
+    if (!project) {
+        throw new Error("Project not found");
+    }
+    if (project.mentorId !== userId) {
+        throw new Error("You can only submit your own projects for review");
+    }
+    if (project.verification !== "DRAFT" && project.verification !== "REJECTED") {
+        throw new Error("Only draft or rejected projects can be submitted for review");
+    }
+
+    await prisma.$transaction([
+        prisma.project.update({
+            where: { id: projectId },
+            data: { verification: "PENDING" },
+        }),
+        prisma.projectEvent.create({
+            data: {
+                type: "SUBMITTED_FOR_REVIEW",
+                projectId,
+                actorId: userId,
+            },
+        }),
+    ]);
+}
+
+export async function getProjectFeedback(projectId: bigint) {
+    return await prisma.projectEvent.findMany({
+        where: {
+            projectId,
+            type: "REJECTED",
+            comment: { not: null },
+        },
+        include: {
+            actor: { select: { id: true, githubUsername: true } },
+        },
+        orderBy: { time: "desc" },
+    });
 }
