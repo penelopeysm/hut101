@@ -324,17 +324,12 @@ export async function submitProject(
     return { project, autoVerified: autoVerify };
 }
 
-export async function getUnreviewedProjects() {
+export async function getAllProjectsForAdmin() {
     return await prisma.project.findMany({
-        where: { verification: { in: ["PENDING", "REJECTED"] }, deletedAt: null },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: "desc" },
         include: {
-            mentor: true,
-            technologies: {
-                include: {
-                    technology: true,
-                },
-            },
+            mentor: { select: { id: true, githubUsername: true } },
+            student: { select: { id: true, githubUsername: true } },
         },
     });
 }
