@@ -15,8 +15,15 @@ export async function signUpAction(projectId: bigint): Promise<{ error?: string 
     return {};
 }
 
-export async function submitForReviewAction(projectId: bigint) {
-    await submitProjectForReview(projectId);
+export async function submitForReviewAction(projectId: bigint): Promise<{ error?: string }> {
+    try {
+        await submitProjectForReview(projectId);
+    } catch (err) {
+        const message = err instanceof Error ? err.message : "Something went wrong";
+        return { error: message };
+    }
+
     revalidatePath(`/projects/${projectId}`);
     revalidatePath("/admin");
+    return {};
 }

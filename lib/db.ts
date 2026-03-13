@@ -359,6 +359,11 @@ export async function setProjectVerification(
     }
     const adminId = BigInt(session.user.id);
 
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    if (!project || project.verification !== "PENDING") {
+        throw new Error("Only pending projects can be approved or rejected");
+    }
+
     await prisma.$transaction([
         prisma.project.update({
             where: { id: projectId },
@@ -391,6 +396,9 @@ export async function submitProjectForReview(projectId: bigint) {
     }
     if (project.mentorId !== userId) {
         throw new Error("You can only submit your own projects for review");
+    }
+    if (project.deletedAt) {
+        throw new Error("Cannot submit a deleted project for review");
     }
     if (project.verification !== "DRAFT" && project.verification !== "REJECTED") {
         throw new Error("Only draft or rejected projects can be submitted for review");
