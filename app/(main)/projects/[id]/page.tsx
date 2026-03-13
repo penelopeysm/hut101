@@ -21,14 +21,14 @@ import SignUpButton from "@/components/SignUpButton";
 import GitHubIssuePreview from "@/components/GitHubIssuePreview";
 
 async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigint; isNew: boolean; isPending: boolean }) {
-    const project = await getProject(projectId);
-    if (!project) {
-        notFound();
-    }
-
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
     const isAdmin = session?.user.role === "ADMIN";
+
+    const project = await getProject(projectId, { includeDeleted: isAdmin });
+    if (!project) {
+        notFound();
+    }
     const isCreator = userId !== null && userId === project.mentorId;
 
     // Visibility gate: unverified projects are only visible to creator and admins

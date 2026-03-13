@@ -14,14 +14,9 @@ async function ProjectTable() {
     const serialized = projects.map((p) => ({
         id: p.id.toString(),
         title: p.title,
-        difficulty: p.difficulty,
         verification: p.verification,
-        repoOwner: p.repoOwner,
-        repoName: p.repoName,
-        issueNumber: p.issueNumber,
         createdAt: p.createdAt.toISOString(),
         deletedAt: p.deletedAt?.toISOString() ?? null,
-        completedAt: p.completedAt?.toISOString() ?? null,
         mentor: { id: p.mentor.id.toString(), githubUsername: p.mentor.githubUsername },
         student: p.student ? { id: p.student.id.toString(), githubUsername: p.student.githubUsername } : null,
     }));

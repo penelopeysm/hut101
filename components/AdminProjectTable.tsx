@@ -7,14 +7,9 @@ import { verifyProjectAction, rejectProjectAction } from "@/app/(main)/admin/act
 export interface AdminProject {
     id: string;
     title: string;
-    difficulty: string;
     verification: string;
-    repoOwner: string;
-    repoName: string;
-    issueNumber: number;
     createdAt: string;
     deletedAt: string | null;
-    completedAt: string | null;
     mentor: { id: string; githubUsername: string };
     student: { id: string; githubUsername: string } | null;
 }
@@ -27,10 +22,14 @@ const filterLabels: Record<Filter, string> = {
     deleted: "Deleted",
 };
 
+function needsVerification(p: AdminProject) {
+    return (p.verification === "PENDING" || p.verification === "REJECTED") && !p.deletedAt;
+}
+
 function filterProjects(projects: AdminProject[], filter: Filter): AdminProject[] {
     switch (filter) {
         case "needs_verification":
-            return projects.filter((p) => (p.verification === "PENDING" || p.verification === "REJECTED") && !p.deletedAt);
+            return projects.filter(needsVerification);
         case "deleted":
             return projects.filter((p) => p.deletedAt !== null);
         default:
@@ -38,24 +37,20 @@ function filterProjects(projects: AdminProject[], filter: Filter): AdminProject[
     }
 }
 
-function formatDate(iso: string) {
-    return new Date(iso).toLocaleDateString();
-}
+const badgeBase = "text-xs font-medium px-1.5 py-0.5 rounded";
+const badgeColors: Record<string, string> = {
+    DELETED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    VERIFIED: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+    PENDING: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    REJECTED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+};
 
 function VerificationBadge({ status, deletedAt }: { status: string; deletedAt: string | null }) {
-    if (deletedAt) {
-        return <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Deleted</span>;
-    }
-    switch (status) {
-        case "VERIFIED":
-            return <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Verified</span>;
-        case "PENDING":
-            return <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Pending</span>;
-        case "REJECTED":
-            return <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Rejected</span>;
-        default:
-            return <span className="text-xs text-muted">{status}</span>;
-    }
+    const key = deletedAt ? "DELETED" : status;
+    const label = deletedAt ? "Deleted" : status.charAt(0) + status.slice(1).toLowerCase();
+    const colors = badgeColors[key];
+    if (!colors) return <span className="text-xs text-muted">{status}</span>;
+    return <span className={`${badgeBase} ${colors}`}>{label}</span>;
 }
 
 export default function AdminProjectTable({ projects }: { projects: AdminProject[] }) {
@@ -78,7 +73,7 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
 
     const counts: Record<Filter, number> = {
         all: projects.length,
-        needs_verification: projects.filter((p) => (p.verification === "PENDING" || p.verification === "REJECTED") && !p.deletedAt).length,
+        needs_verification: projects.filter(needsVerification).length,
         deleted: projects.filter((p) => p.deletedAt !== null).length,
     };
 
@@ -146,10 +141,10 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
                                         <VerificationBadge status={p.verification} deletedAt={p.deletedAt} />
                                     </td>
                                     <td className="px-3 py-2 text-muted whitespace-nowrap">
-                                        {formatDate(p.createdAt)}
+                                        {new Date(p.createdAt).toLocaleDateString()}
                                     </td>
                                     <td className="px-3 py-2">
-                                        {!p.deletedAt && (p.verification === "PENDING" || p.verification === "REJECTED") && (
+                                        {needsVerification(p) && (
                                             <div className="flex gap-1.5">
                                                 <button
                                                     onClick={() => handleVerify(p.id)}

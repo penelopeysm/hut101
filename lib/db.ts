@@ -22,10 +22,7 @@ export async function getVerifiedProjects() {
     });
 }
 
-export async function getProject(id: bigint) {
-    const session = await auth();
-    const isAdmin = session?.user?.role === "ADMIN";
-
+export async function getProject(id: bigint, { includeDeleted = false } = {}) {
     const project = await prisma.project.findUnique({
         where: { id },
         include: {
@@ -43,7 +40,7 @@ export async function getProject(id: bigint) {
         },
     });
 
-    if (project?.deletedAt && !isAdmin) {
+    if (project?.deletedAt && !includeDeleted) {
         return null;
     }
 
