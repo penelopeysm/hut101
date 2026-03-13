@@ -1,6 +1,6 @@
 "use server";
 
-import { signUpForProject } from "@/lib/db";
+import { signUpForProject, submitProjectForReview } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 export async function signUpAction(projectId: bigint): Promise<{ error?: string }> {
@@ -13,4 +13,10 @@ export async function signUpAction(projectId: bigint): Promise<{ error?: string 
 
     revalidatePath(`/projects/${projectId}`);
     return {};
+}
+
+export async function submitForReviewAction(projectId: bigint) {
+    await submitProjectForReview(projectId);
+    revalidatePath(`/projects/${projectId}`);
+    revalidatePath("/admin");
 }
