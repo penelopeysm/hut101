@@ -19,7 +19,7 @@ export const nextAuthConfig = {
         clientSecret: process.env.GITHUB_SECRET!,
     })],
     callbacks: {
-        async jwt({ token, user, profile }) {
+        async jwt({ token, user, profile, account }) {
             // If it's a new login (i.e., someone clicked sign in with GitHub --
             // not necessarily the first time, but any time they sign in), then
             // we will have `user` and `profile`. We use that to update their
@@ -47,6 +47,7 @@ export const nextAuthConfig = {
                     githubUsername: prismaUser.githubUsername,
                     contactEmail: prismaUser.contactEmail,
                     role: prismaUser.role,
+                    accessToken: account?.access_token ?? token.accessToken,
                 };
                 return newToken;
             } else {

@@ -18,6 +18,7 @@ import { notFound } from "next/navigation";
 import SuccessBanner from "@/components/SuccessBanner";
 import DifficultyBadge from "@/components/DifficultyBadge";
 import SignUpButton from "@/components/SignUpButton";
+import GitHubIssuePreview from "@/components/GitHubIssuePreview";
 
 async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigint; isNew: boolean; isPending: boolean }) {
     const project = await getProject(projectId);
@@ -121,6 +122,14 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
                     </div>
                 )}
             </div>
+
+            <Suspense fallback={null}>
+                <GitHubIssuePreview
+                    owner={project.repoOwner}
+                    repo={project.repoName}
+                    issueNumber={project.issueNumber}
+                />
+            </Suspense>
 
             {canSignUp && (
                 <div className="mb-8">

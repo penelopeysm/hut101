@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Image from "next/image";
 import { getUserProfile } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";
@@ -42,9 +43,11 @@ async function ProfileContent({ userId }: { userId: bigint }) {
     return (
         <div className="animate-fade-in">
             <div className="flex items-center gap-4 mb-8">
-                <img
+                <Image
                     src={user.githubPicture}
                     alt={user.name}
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-full"
                 />
                 <div>
