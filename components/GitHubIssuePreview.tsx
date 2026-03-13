@@ -26,7 +26,7 @@ async function getAccessToken(): Promise<string | undefined> {
         req: {
             headers: await headers(),
             cookies: await cookies(),
-        } as any,
+        } as unknown as Parameters<typeof getToken>[0]["req"],
         secret: process.env.NEXTAUTH_SECRET,
     });
     return token?.accessToken ?? undefined;
@@ -106,7 +106,7 @@ async function fetchGitHubIssue(
             title: data.title,
             state: data.state,
             body: truncate(stripMarkdown(data.body ?? ""), 200),
-            labels: (data.labels ?? []).map((l: any) => ({
+            labels: (data.labels ?? []).map((l: { name: string; color: string }) => ({
                 name: l.name,
                 color: l.color,
             })),
