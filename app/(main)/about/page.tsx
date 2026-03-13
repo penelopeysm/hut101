@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
 import PageHeading from "@/components/PageHeading";
 
 export const metadata: Metadata = { title: "About" };
@@ -28,7 +30,7 @@ export default function Page() {
                     <div className="space-y-4">
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">1</span>
-                            <p className="text-sm"><strong>Browse</strong> the <a href="/projects" className="text-accent hover:underline">project list</a> and find something that matches your skills and interests.</p>
+                            <p className="text-sm"><strong>Browse</strong> the <Link href="/projects" className="text-accent hover:underline">project list</Link> and find something that matches your skills and interests.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">2</span>
@@ -85,9 +87,11 @@ export default function Page() {
                             className="absolute left-0 top-4 z-10 block bg-card p-3 pb-14 shadow-lg hover:z-30 hover:scale-105 transition-all duration-300"
                             style={{ transform: "rotate(-6deg)", width: "220px" }}
                         >
-                            <img
+                            <Image
                                 src="https://avatars.githubusercontent.com/u/122629585?v=4"
                                 alt="Penelope Yong"
+                                width={220}
+                                height={220}
                                 className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500"
                             />
                             <span
@@ -103,9 +107,11 @@ export default function Page() {
                             className="absolute right-0 top-0 z-20 block bg-card p-3 pb-14 shadow-lg hover:z-30 hover:scale-105 transition-all duration-300"
                             style={{ transform: "rotate(4deg)", width: "220px" }}
                         >
-                            <img
+                            <Image
                                 src="https://avatars.githubusercontent.com/u/72076688?v=4"
                                 alt="Rosie Wood"
+                                width={220}
+                                height={220}
                                 className="w-full aspect-square object-cover grayscale hover:grayscale-0 transition-all duration-500"
                             />
                             <span
