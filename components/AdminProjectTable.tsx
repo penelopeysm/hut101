@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import Link from "next/link";
 import { verifyProjectAction, rejectProjectAction } from "@/app/(main)/admin/actions";
 
@@ -133,91 +133,92 @@ export default function AdminProjectTable({ projects }: { projects: AdminProject
                             </tr>
                         ) : (
                             filtered.map((p) => (
-                                <tr key={p.id} className="border-b border-border last:border-b-0 hover:bg-surface/50">
-                                    <td className="px-3 py-2">
-                                        <Link href={`/projects/${p.id}`} className="text-accent hover:underline">
-                                            {p.title}
-                                        </Link>
-                                    </td>
-                                    <td className="px-3 py-2 text-muted">
-                                        <Link href={`/users/${p.mentor.id}`} className="hover:text-accent hover:underline">
-                                            @{p.mentor.githubUsername}
-                                        </Link>
-                                    </td>
-                                    <td className="px-3 py-2 text-muted">
-                                        {p.student ? (
-                                            <Link href={`/users/${p.student.id}`} className="hover:text-accent hover:underline">
-                                                @{p.student.githubUsername}
+                                <React.Fragment key={p.id}>
+                                    <tr className={`border-b border-border last:border-b-0 hover:bg-surface/50 ${rejectingId === p.id ? "border-b-0" : ""}`}>
+                                        <td className="px-3 py-2">
+                                            <Link href={`/projects/${p.id}`} className="text-accent hover:underline">
+                                                {p.title}
                                             </Link>
-                                        ) : (
-                                            <span className="opacity-40">&mdash;</span>
-                                        )}
-                                    </td>
-                                    <td className="px-3 py-2">
-                                        <VerificationBadge status={p.verification} deletedAt={p.deletedAt} />
-                                    </td>
-                                    <td className="px-3 py-2 text-muted whitespace-nowrap">
-                                        {new Date(p.createdAt).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-3 py-2">
-                                        {p.verification === "PENDING" && !p.deletedAt && (
-                                            <div className="flex gap-1.5">
-                                                <button
-                                                    onClick={() => handleVerify(p.id)}
-                                                    disabled={isPending}
-                                                    className="cursor-pointer text-xs font-medium px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white transition-colors disabled:opacity-50"
-                                                >
-                                                    Approve
-                                                </button>
-                                                {rejectingId !== p.id && (
+                                        </td>
+                                        <td className="px-3 py-2 text-muted">
+                                            <Link href={`/users/${p.mentor.id}`} className="hover:text-accent hover:underline">
+                                                @{p.mentor.githubUsername}
+                                            </Link>
+                                        </td>
+                                        <td className="px-3 py-2 text-muted">
+                                            {p.student ? (
+                                                <Link href={`/users/${p.student.id}`} className="hover:text-accent hover:underline">
+                                                    @{p.student.githubUsername}
+                                                </Link>
+                                            ) : (
+                                                <span className="opacity-40">&mdash;</span>
+                                            )}
+                                        </td>
+                                        <td className="px-3 py-2">
+                                            <VerificationBadge status={p.verification} deletedAt={p.deletedAt} />
+                                        </td>
+                                        <td className="px-3 py-2 text-muted whitespace-nowrap">
+                                            {new Date(p.createdAt).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-3 py-2">
+                                            {p.verification === "PENDING" && !p.deletedAt && (
+                                                <div className="flex gap-1.5">
+                                                    <button
+                                                        onClick={() => handleVerify(p.id)}
+                                                        disabled={isPending}
+                                                        className="cursor-pointer text-xs font-medium px-2 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white transition-colors disabled:opacity-50"
+                                                    >
+                                                        Approve
+                                                    </button>
                                                     <button
                                                         onClick={() => handleRejectStart(p.id)}
-                                                        disabled={isPending}
+                                                        disabled={isPending || rejectingId === p.id}
                                                         className="cursor-pointer text-xs font-medium px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50"
                                                     >
                                                         Reject
                                                     </button>
-                                                )}
-                                            </div>
-                                        )}
-                                    </td>
-                                </tr>
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    {rejectingId === p.id && (
+                                        <tr className="border-b border-border last:border-b-0">
+                                            <td colSpan={6} className="px-3 py-3 bg-surface/50">
+                                                <p className="text-sm font-medium mb-2">Feedback for &ldquo;{p.title}&rdquo;</p>
+                                                <textarea
+                                                    autoFocus
+                                                    value={rejectComment}
+                                                    onChange={(e) => setRejectComment(e.target.value)}
+                                                    placeholder="Explain what changes are needed..."
+                                                    rows={3}
+                                                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent mb-2"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handleRejectConfirm(p.id)}
+                                                        disabled={isPending || !rejectComment.trim()}
+                                                        className="cursor-pointer text-xs font-medium px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        {isPending ? "Rejecting..." : "Confirm rejection"}
+                                                    </button>
+                                                    <button
+                                                        onClick={handleRejectCancel}
+                                                        disabled={isPending}
+                                                        className="cursor-pointer text-xs font-medium px-3 py-1.5 rounded border border-border text-muted hover:text-foreground transition-colors disabled:opacity-50"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
                             ))
                         )}
                     </tbody>
                 </table>
             </div>
 
-            {rejectingId && (
-                <div className="mt-3 border border-border rounded-lg p-4 bg-card">
-                    <p className="text-sm font-medium mb-2">
-                        Rejection feedback for &ldquo;{projects.find((p) => p.id === rejectingId)?.title}&rdquo;
-                    </p>
-                    <textarea
-                        value={rejectComment}
-                        onChange={(e) => setRejectComment(e.target.value)}
-                        placeholder="Explain what changes are needed..."
-                        rows={3}
-                        className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent mb-2"
-                    />
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handleRejectConfirm(rejectingId)}
-                            disabled={isPending || !rejectComment.trim()}
-                            className="cursor-pointer text-xs font-medium px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {isPending ? "Rejecting..." : "Confirm rejection"}
-                        </button>
-                        <button
-                            onClick={handleRejectCancel}
-                            disabled={isPending}
-                            className="cursor-pointer text-xs font-medium px-3 py-1.5 rounded border border-border text-muted hover:text-foreground transition-colors disabled:opacity-50"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
