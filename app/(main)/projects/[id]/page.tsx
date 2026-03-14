@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getProject, getActiveStudentProjectCount, MAX_ACTIVE_STUDENT_PROJECTS } from "@/lib/db";
+import { getProject, getActiveStudentProjectCount, MAX_ACTIVE_STUDENT_PROJECTS, getProjectFeedback } from "@/lib/db";
+import SubmitForReviewButton from "@/components/SubmitForReviewButton";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
@@ -20,15 +21,15 @@ import DifficultyBadge from "@/components/DifficultyBadge";
 import SignUpButton from "@/components/SignUpButton";
 import GitHubIssuePreview from "@/components/GitHubIssuePreview";
 
-async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigint; isNew: boolean; isPending: boolean }) {
-    const project = await getProject(projectId);
-    if (!project) {
-        notFound();
-    }
-
+async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { projectId: bigint; isNew: boolean; isPending: boolean; isDraft: boolean }) {
     const session = await auth();
     const userId = session ? BigInt(session.user.id) : null;
     const isAdmin = session?.user.role === "ADMIN";
+
+    const project = await getProject(projectId, { includeDeleted: isAdmin });
+    if (!project) {
+        notFound();
+    }
     const isCreator = userId !== null && userId === project.mentorId;
 
     // Visibility gate: unverified projects are only visible to creator and admins
@@ -41,18 +42,48 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
 
     const issueUrl = `https://github.com/${project.repoOwner}/${project.repoName}/issues/${project.issueNumber}`;
 
+    const feedback = project.verification === "REJECTED"
+        ? await getProjectFeedback(projectId)
+        : [];
+
     return (
         <div className="animate-fade-in">
             {isNew && <SuccessBanner message="Project submitted successfully!" />}
             {isPending && <SuccessBanner message="Project submitted! It will appear on the public list once an admin approves it." />}
+            {isDraft && <SuccessBanner message="Project saved as draft. You can submit it for review when you're ready." />}
+            {project.verification === "DRAFT" && isCreator && (
+                <div className="bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 text-sm rounded-md px-4 py-3 mb-6">
+                    <p className="font-medium mb-2">This project is a draft and has not been submitted for review.</p>
+                    <SubmitForReviewButton projectId={project.id.toString()} />
+                </div>
+            )}
             {project.verification === "PENDING" && isCreator && !isPending && (
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm rounded-md px-4 py-3 mb-6">
                     This project is pending admin verification and is not yet visible to others.
                 </div>
             )}
             {project.verification === "REJECTED" && isCreator && (
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm rounded-md px-4 py-3 mb-6">
+                    <p className="font-medium mb-1">Changes requested</p>
+                    <p className="mb-3">Please review the feedback below, edit your project as needed, and resubmit when ready.</p>
+                    {feedback.length > 0 && (
+                        <div className="space-y-2 mb-3">
+                            {feedback.map((f) => (
+                                <div key={f.id.toString()} className="bg-white/50 dark:bg-black/20 rounded px-3 py-2 text-sm">
+                                    <p>{f.comment}</p>
+                                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                                        — @{f.actor.githubUsername}, {f.time.toLocaleDateString()}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <SubmitForReviewButton projectId={project.id.toString()} />
+                </div>
+            )}
+            {project.deletedAt && (
                 <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 text-sm rounded-md px-4 py-3 mb-6">
-                    This project was not approved by an admin and is not visible to others.
+                    This project was deleted on {project.deletedAt.toLocaleDateString()} and is no longer visible to users.
                 </div>
             )}
             <div className="flex items-baseline justify-between gap-4 mb-4">
@@ -148,13 +179,18 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
                     </h2>
                     <div className="space-y-2">
                         {project.events.map((event) => (
-                            <div key={event.id.toString()} className="flex gap-2 text-sm text-muted">
-                                <span className="shrink-0">
-                                    {event.time.toLocaleDateString()}
-                                </span>
-                                <span>
-                                    <Link href={`/users/${event.actor.id}`} className="text-accent hover:underline transition-colors">@{event.actor.githubUsername}</Link> — {event.type.replace(/_/g, " ").toLowerCase()}
-                                </span>
+                            <div key={event.id.toString()} className="text-sm text-muted">
+                                <div className="flex gap-2">
+                                    <span className="shrink-0">
+                                        {event.time.toLocaleDateString()}
+                                    </span>
+                                    <span>
+                                        <Link href={`/users/${event.actor.id}`} className="text-accent hover:underline transition-colors">@{event.actor.githubUsername}</Link> — {event.type === "REJECTED" ? "requested changes" : event.type.replace(/_/g, " ").toLowerCase()}
+                                    </span>
+                                </div>
+                                {event.comment && (
+                                    <p className="ml-[calc(theme(spacing.2)+10ch)] mt-0.5 text-xs italic">&ldquo;{event.comment}&rdquo;</p>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -164,7 +200,7 @@ async function ProjectDetail({ projectId, isNew, isPending }: { projectId: bigin
     );
 }
 
-export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string; pending?: string }> }) {
+export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ new?: string; pending?: string; draft?: string }> }) {
     const { id } = await params;
     let projectId: bigint;
     try {
@@ -173,7 +209,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         notFound();
     }
 
-    const { new: isNew, pending } = await searchParams;
+    const { new: isNew, pending, draft } = await searchParams;
 
     return (
         <div className="max-w-2xl">
@@ -181,7 +217,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 &larr; All projects
             </Link>
             <Suspense fallback={<p role="status" className="text-muted">Loading project...</p>}>
-                <ProjectDetail projectId={projectId} isNew={!!isNew} isPending={!!pending} />
+                <ProjectDetail projectId={projectId} isNew={!!isNew} isPending={!!pending} isDraft={!!draft} />
             </Suspense>
         </div>
     );

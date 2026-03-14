@@ -9,7 +9,11 @@ export async function verifyProjectAction(projectId: bigint) {
     revalidatePath("/projects");
 }
 
-export async function rejectProjectAction(projectId: bigint) {
-    await setProjectVerification(projectId, "REJECTED");
+export async function rejectProjectAction(projectId: bigint, comment: string) {
+    if (!comment.trim()) {
+        throw new Error("Rejection feedback is required");
+    }
+    await setProjectVerification(projectId, "REJECTED", comment.trim());
     revalidatePath("/admin");
+    revalidatePath("/projects");
 }

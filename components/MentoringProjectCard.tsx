@@ -21,11 +21,14 @@ interface MentoringProjectCardProps {
 export default function MentoringProjectCard({ project, showEditControls, canEdit }: MentoringProjectCardProps) {
     return (
         <div className="bg-card border border-border rounded-lg p-4">
+            {showEditControls && project.verification === "DRAFT" && (
+                <span className="bg-slate-100 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 text-xs font-medium px-2 py-0.5 rounded inline-block mb-2">Draft</span>
+            )}
             {showEditControls && project.verification === "PENDING" && (
                 <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium px-1 py-0.5 rounded inline-block mb-2">Pending verification</span>
             )}
             {showEditControls && project.verification === "REJECTED" && (
-                <span className="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-medium px-2 py-0.5 rounded inline-block mb-2">Rejected</span>
+                <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium px-2 py-0.5 rounded inline-block mb-2">Changes requested</span>
             )}
             <div className="flex flex-wrap items-baseline gap-2 mb-1">
                 <Link

@@ -1,35 +1,27 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
-import { getUnreviewedProjects } from "@/lib/db";
+import { getAllProjectsForAdmin } from "@/lib/db";
 import { notFound } from "next/navigation";
 import PageHeading from "@/components/PageHeading";
-import AdminVerificationQueue from "@/components/AdminVerificationQueue";
+import AdminProjectTable from "@/components/AdminProjectTable";
 
 export const metadata: Metadata = { title: "Admin" };
 
-async function VerificationQueue() {
-    const projects = await getUnreviewedProjects();
+async function ProjectTable() {
+    const projects = await getAllProjectsForAdmin();
 
     const serialized = projects.map((p) => ({
         id: p.id.toString(),
         title: p.title,
-        description: p.description,
-        difficulty: p.difficulty,
         verification: p.verification,
-        repoOwner: p.repoOwner,
-        repoName: p.repoName,
-        issueNumber: p.issueNumber,
         createdAt: p.createdAt.toISOString(),
-        mentorJobRole: p.mentorJobRole,
-        mentorTimeCommitment: p.mentorTimeCommitment,
+        deletedAt: p.deletedAt?.toISOString() ?? null,
         mentor: { id: p.mentor.id.toString(), githubUsername: p.mentor.githubUsername },
-        technologies: p.technologies.map((pt) => ({
-            technology: { name: pt.technology.name },
-        })),
+        student: p.student ? { id: p.student.id.toString(), githubUsername: p.student.githubUsername } : null,
     }));
 
-    return <AdminVerificationQueue projects={serialized} />;
+    return <AdminProjectTable projects={serialized} />;
 }
 
 export default async function Page() {
@@ -40,9 +32,9 @@ export default async function Page() {
 
     return (
         <>
-            <PageHeading>Verification Queue</PageHeading>
-            <Suspense fallback={<p role="status" className="text-muted">Loading queue...</p>}>
-                <VerificationQueue />
+            <PageHeading>Admin</PageHeading>
+            <Suspense fallback={<p role="status" className="text-muted">Loading projects...</p>}>
+                <ProjectTable />
             </Suspense>
         </>
     );

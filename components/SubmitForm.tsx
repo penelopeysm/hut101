@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { submitProject, type SubmitResult } from "@/app/(main)/submit/actions";
 import ErrorMessage from "@/components/ErrorMessage";
 import TechnologyPicker from "@/components/TechnologyPicker";
@@ -10,6 +10,7 @@ type Technology = { id: bigint; name: string };
 
 export default function SubmitForm({ technologies, isMember }: { technologies: Technology[]; isMember: boolean }) {
     const [state, formAction, isPending] = useActionState<SubmitResult | null, FormData>(submitProject, null);
+    const intentRef = useRef<HTMLInputElement>(null);
 
     // key forces React to re-mount the form when state changes,
     // ensuring all defaultValues (especially <select>) are applied
@@ -18,6 +19,7 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
     return (
         <form key={formKey} action={formAction} className="max-w-lg space-y-5">
             {state?.error && <ErrorMessage message={state.error} />}
+            <input type="hidden" name="intent" ref={intentRef} defaultValue="submit" />
 
             <div>
                 <label htmlFor="title" className="block text-sm font-medium mb-1">
@@ -142,14 +144,37 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                 </>
             )}
 
-            <button
-                type="submit"
-                disabled={isPending}
-                aria-busy={isPending}
-                className={buttonClass}
-            >
-                {isPending ? "Submitting..." : "Submit project"}
-            </button>
+            {isMember ? (
+                <div className="flex gap-3">
+                    <button
+                        type="submit"
+                        disabled={isPending}
+                        aria-busy={isPending}
+                        onClick={() => { if (intentRef.current) intentRef.current.value = "draft"; }}
+                        className="cursor-pointer border border-border text-foreground bg-transparent px-4 py-2 rounded-md text-sm font-medium hover:bg-surface transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isPending ? "Saving..." : "Save as draft"}
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isPending}
+                        aria-busy={isPending}
+                        onClick={() => { if (intentRef.current) intentRef.current.value = "submit"; }}
+                        className={buttonClass}
+                    >
+                        {isPending ? "Submitting..." : "Submit for review"}
+                    </button>
+                </div>
+            ) : (
+                <button
+                    type="submit"
+                    disabled={isPending}
+                    aria-busy={isPending}
+                    className={buttonClass}
+                >
+                    {isPending ? "Submitting..." : "Submit project"}
+                </button>
+            )}
         </form>
     );
 }

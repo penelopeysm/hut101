@@ -37,8 +37,9 @@ async function ProfileContent({ userId }: { userId: bigint }) {
 
     const { user, mentoring: allMentoring, studying } = profile;
     const isOwnProfile = session !== null && BigInt(session.user.id) === userId;
-    // On someone else's profile, hide unverified projects
-    const mentoring = isOwnProfile ? allMentoring : allMentoring.filter((p) => p.verification === "VERIFIED");
+    const isAdmin = session?.user.role === "ADMIN";
+    // On someone else's profile, hide unverified projects (admins can see all)
+    const mentoring = (isOwnProfile || isAdmin) ? allMentoring : allMentoring.filter((p) => p.verification === "VERIFIED");
 
     return (
         <div className="animate-fade-in">

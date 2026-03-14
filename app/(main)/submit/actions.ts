@@ -27,6 +27,7 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
     const technologies = formData.getAll("technologies").map(String);
     const mentorJobRole = (formData.get("mentorJobRole") as string) ?? "";
     const mentorTimeCommitment = (formData.get("mentorTimeCommitment") as string) ?? "";
+    const intent = formData.get("intent") as string;
 
     const fields = { title, description, githubIssue: githubIssueLink, difficulty, technologies, mentorJobRole, mentorTimeCommitment };
 
@@ -48,12 +49,18 @@ export async function submitProject(_prev: SubmitResult | null, formData: FormDa
             technologies,
             mentorJobRole || null,
             mentorTimeCommitment || null,
+            intent === "submit",
         );
     } catch (err) {
         console.error("Error submitting project:", err);
         return { success: false, error: "Something went wrong while submitting. Please try again.", fields };
     }
 
-    const query = result.autoVerified ? "?new=1" : "?pending=1";
-    redirect(`/projects/${result.project.id}${query}`);
+    if (result.autoVerified) {
+        redirect(`/projects/${result.project.id}?new=1`);
+    } else if (result.isDraft) {
+        redirect(`/projects/${result.project.id}?draft=1`);
+    } else {
+        redirect(`/projects/${result.project.id}?pending=1`);
+    }
 }
