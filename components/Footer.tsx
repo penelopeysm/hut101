@@ -25,7 +25,7 @@ export default function Footer() {
                     <HutIcon className="w-4 h-4 text-accent" />
                     <span className="font-serif text-base text-foreground">hut101</span>
                     <span aria-hidden="true">&middot;</span>
-                    <span>open source, with a guide</span>
+                    <span>open source for researchers, with a guide</span>
                 </div>
                 <div className="flex items-center gap-5">
                     <Link href="/projects" className="hover:text-accent transition-colors">
