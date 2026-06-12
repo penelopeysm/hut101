@@ -3,7 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { signIn, signOut } from "next-auth/react";
+import HutIcon from "@/components/HutIcon";
 
 interface TopMenuUser {
     id: bigint;
@@ -16,21 +18,36 @@ interface TopMenuProps {
     user: TopMenuUser | null;
 }
 
+const loginButtonClass =
+    "cursor-pointer bg-accent text-white dark:text-background px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-accent-hover transition-colors";
+
 export default function TopMenu({ user }: TopMenuProps) {
     const [menuOpen, setMenuOpen] = useState(false);
+    const pathname = usePathname();
+
+    const isActive = (href: string) =>
+        pathname === href || pathname.startsWith(`${href}/`);
+
+    const linkClass = (href: string, block = false) =>
+        `${block ? "block " : ""}transition-colors ${
+            isActive(href)
+                ? "text-foreground underline decoration-accent decoration-2 underline-offset-[6px]"
+                : "text-muted hover:text-foreground"
+        }`;
 
     return (
-        <nav className="shadow-sm bg-background">
+        <nav className="sticky top-0 z-40 bg-background/85 backdrop-blur-sm border-b border-border">
             <div className="flex justify-between items-center px-4 sm:px-6 h-14">
                 <div className="flex items-center gap-4 sm:gap-6">
-                    <Link href="/" className="font-sans text-xl tracking-tight">
+                    <Link href="/" className="flex items-center gap-1.5 font-serif font-semibold text-xl tracking-tight">
+                        <HutIcon className="w-5 h-5 text-accent" />
                         hut101
                     </Link>
                     <div className="hidden sm:flex gap-4 text-sm">
-                        <Link href="/projects" className="text-muted hover:text-foreground transition-colors">
+                        <Link href="/projects" className={linkClass("/projects")}>
                             Projects
                         </Link>
-                        <Link href="/about" className="text-muted hover:text-foreground transition-colors">
+                        <Link href="/about" className={linkClass("/about")}>
                             About
                         </Link>
                     </div>
@@ -40,15 +57,15 @@ export default function TopMenu({ user }: TopMenuProps) {
                     {/* Desktop links */}
                     {user ? (
                         <div className="hidden sm:flex items-center gap-4">
-                            <Link href="/submit" className="text-muted hover:text-foreground transition-colors">
+                            <Link href="/submit" className={linkClass("/submit")}>
                                 Submit a Project
                             </Link>
                             {user.role === "ADMIN" && (
-                                <Link href="/admin" className="text-muted hover:text-foreground transition-colors">
+                                <Link href="/admin" className={linkClass("/admin")}>
                                     Admin
                                 </Link>
                             )}
-                            <Link href={`/users/${user.id}`} className="text-muted hover:text-foreground transition-colors">
+                            <Link href={`/users/${user.id}`} className={linkClass(`/users/${user.id}`)}>
                                 My Profile
                             </Link>
                             <button onClick={() => signOut()} className="cursor-pointer text-muted hover:text-foreground transition-colors">
@@ -67,7 +84,7 @@ export default function TopMenu({ user }: TopMenuProps) {
                     ) : (
                         <button
                             onClick={() => signIn("github")}
-                            className="hidden sm:inline cursor-pointer bg-accent text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
+                            className={`hidden sm:inline ${loginButtonClass}`}
                         >
                             Login with GitHub
                         </button>
@@ -100,23 +117,23 @@ export default function TopMenu({ user }: TopMenuProps) {
             {/* Mobile dropdown */}
             {menuOpen && (
                 <div className="sm:hidden border-t border-border px-4 py-3 space-y-3 text-sm animate-fade-in">
-                    <Link href="/projects" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                    <Link href="/projects" onClick={() => setMenuOpen(false)} className={linkClass("/projects", true)}>
                         Projects
                     </Link>
-                    <Link href="/about" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                    <Link href="/about" onClick={() => setMenuOpen(false)} className={linkClass("/about", true)}>
                         About
                     </Link>
                     {user ? (
                         <>
-                            <Link href="/submit" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                            <Link href="/submit" onClick={() => setMenuOpen(false)} className={linkClass("/submit", true)}>
                                 Submit a Project
                             </Link>
                             {user.role === "ADMIN" && (
-                                <Link href="/admin" onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                                <Link href="/admin" onClick={() => setMenuOpen(false)} className={linkClass("/admin", true)}>
                                     Admin
                                 </Link>
                             )}
-                            <Link href={`/users/${user.id}`} onClick={() => setMenuOpen(false)} className="block text-muted hover:text-foreground transition-colors">
+                            <Link href={`/users/${user.id}`} onClick={() => setMenuOpen(false)} className={linkClass(`/users/${user.id}`, true)}>
                                 My Profile
                             </Link>
                             <button onClick={() => { signOut(); setMenuOpen(false); }} className="cursor-pointer block text-muted hover:text-foreground transition-colors">
@@ -126,7 +143,7 @@ export default function TopMenu({ user }: TopMenuProps) {
                     ) : (
                         <button
                             onClick={() => { signIn("github"); setMenuOpen(false); }}
-                            className="cursor-pointer bg-accent text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
+                            className={loginButtonClass}
                         >
                             Login with GitHub
                         </button>

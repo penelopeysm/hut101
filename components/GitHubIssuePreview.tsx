@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { cookies, headers } from "next/headers";
 import Link from "next/link";
+import { sectionLabelClass } from "@/lib/styles";
 
 // --- Types ---
 
@@ -36,6 +37,7 @@ function stripMarkdown(text: string): string {
     return text
         .replace(/```[\s\S]*?```/g, "")     // code blocks
         .replace(/`[^`]*`/g, "")             // inline code
+        .replace(/<[^>]+>/g, "")             // raw HTML tags
         .replace(/!\[.*?\]\(.*?\)/g, "")     // images
         .replace(/\[([^\]]*)\]\(.*?\)/g, "$1") // links → text
         .replace(/#{1,6}\s+/g, "")           // headings
@@ -170,10 +172,10 @@ export default async function GitHubIssuePreview({
 
     return (
         <div className="mb-6">
-            <h2 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3">
+            <h2 className={`${sectionLabelClass} mb-3`}>
                 GitHub Issue
             </h2>
-            <div className="bg-card border border-border rounded-lg p-5">
+            <div className="bg-card border border-border rounded-xl p-5">
                 <div className="flex items-start gap-2 mb-2">
                     <StatusIcon state={issue.state} />
                     <Link

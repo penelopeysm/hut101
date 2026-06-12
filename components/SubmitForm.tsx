@@ -22,10 +22,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
             <input type="hidden" name="intent" ref={intentRef} defaultValue="submit" />
 
             <div>
-                <label htmlFor="title" className="block text-sm font-medium mb-1">
+                <label htmlFor="title" className="block text-smd font-medium mb-1">
                     Title
                 </label>
-                <p className="text-xs text-muted mb-1.5">
+                <p className="text-sm text-muted mb-1.5">
                     A short, descriptive name for the task. This is what students will see when browsing projects.
                 </p>
                 <input
@@ -38,10 +38,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
             </div>
 
             <div>
-                <label htmlFor="description" className="block text-sm font-medium mb-1">
+                <label htmlFor="description" className="block text-smd font-medium mb-1">
                     Description
                 </label>
-                <p className="text-xs text-muted mb-1.5">
+                <p className="text-sm text-muted mb-1.5">
                     Explain what the task involves and what a student would need to do.
                     Remember that students may have less context about the project, its tooling, and its codebase than you do.
                 </p>
@@ -56,10 +56,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
             </div>
 
             <div>
-                <label htmlFor="githubIssue" className="block text-sm font-medium mb-1">
+                <label htmlFor="githubIssue" className="block text-smd font-medium mb-1">
                     GitHub issue link
                 </label>
-                <p className="text-xs text-muted mb-1.5">
+                <p className="text-sm text-muted mb-1.5">
                     Link to the issue on the project&rsquo;s repository.
                 </p>
                 <input
@@ -73,10 +73,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
             </div>
 
             <div>
-                <label htmlFor="difficulty" className="block text-sm font-medium mb-1">
+                <label htmlFor="difficulty" className="block text-smd font-medium mb-1">
                     Difficulty
                 </label>
-                <p className="text-xs text-muted mb-1.5">
+                <p className="text-sm text-muted mb-1.5">
                     How long would this take you to do yourself?
                 </p>
                 <select
@@ -94,10 +94,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
             </div>
 
             <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-smd font-medium mb-1">
                     Technologies
                 </label>
-                <p className="text-xs text-muted mb-1.5">
+                <p className="text-sm text-muted mb-1.5">
                     Select the main languages or tools a student would need to use.
                 </p>
                 <TechnologyPicker
@@ -109,10 +109,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
             {isMember && (
                 <>
                     <div>
-                        <label htmlFor="mentorJobRole" className="block text-sm font-medium mb-1">
+                        <label htmlFor="mentorJobRole" className="block text-smd font-medium mb-1">
                             What is your current job role?
                         </label>
-                        <p className="text-xs text-muted mb-1.5">
+                        <p className="text-sm text-muted mb-1.5">
                             This helps us verify that you have the background to mentor on this project.
                         </p>
                         <textarea
@@ -126,10 +126,10 @@ export default function SubmitForm({ technologies, isMember }: { technologies: T
                     </div>
 
                     <div>
-                        <label htmlFor="mentorTimeCommitment" className="block text-sm font-medium mb-1">
+                        <label htmlFor="mentorTimeCommitment" className="block text-smd font-medium mb-1">
                             How much time can you commit to mentoring?
                         </label>
-                        <p className="text-xs text-muted mb-1.5">
+                        <p className="text-sm text-muted mb-1.5">
                             We recommend 2&ndash;3 contact hours total: an initial meeting, a check-in before the PR, and a wrap-up discussion.
                         </p>
                         <textarea

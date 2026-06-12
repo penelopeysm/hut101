@@ -13,6 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     }
 }
 import { formatDateAsDaysInPast, projectStatus } from "@/lib/utils";
+import { sectionLabelClass } from "@/lib/styles";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -87,11 +88,11 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
                 </div>
             )}
             <div className="flex items-baseline justify-between gap-4 mb-4">
-                <h1 className="font-serif text-3xl">{project.title}</h1>
+                <h1 className="font-serif text-3xl sm:text-4xl tracking-tight">{project.title}</h1>
                 {((isCreator && session?.user.role === "TRUSTED") || (isCreator && project.verification !== "VERIFIED") || isAdmin) && (
                     <Link
                         href={`/projects/${project.id}/edit`}
-                        className="text-sm text-accent hover:text-accent-hover transition-colors"
+                        className="shrink-0 text-sm border border-border rounded-full px-3.5 py-1 text-muted hover:text-accent hover:border-accent/50 transition-colors"
                     >
                         Edit
                     </Link>
@@ -111,9 +112,9 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
 
             <p className="text-muted mb-6 leading-relaxed">{project.description}</p>
 
-            <div className="bg-card border border-border rounded-lg p-5 space-y-3 mb-6">
-                <div className="flex gap-2 text-sm">
-                    <span className="text-muted w-20 shrink-0">Mentor</span>
+            <div className="bg-card border border-border rounded-xl p-5 space-y-3 mb-6">
+                <div className="flex items-baseline gap-2 text-sm">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Mentor</span>
                     <span>
                         <Link href={`/users/${project.mentor.id}`} className="text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link>
                     </span>
@@ -122,8 +123,8 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
                     )}
                 </div>
 
-                <div className="flex gap-2 text-sm">
-                    <span className="text-muted w-20 shrink-0">Student</span>
+                <div className="flex items-baseline gap-2 text-sm">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Student</span>
                     <span>
                         {project.student === null
                             ? "No one yet — this project is open!"
@@ -132,22 +133,22 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
                     </span>
                 </div>
 
-                <div className="flex gap-2 text-sm">
-                    <span className="text-muted w-20 shrink-0">Issue</span>
-                    <Link href={issueUrl} className="text-accent hover:underline">
+                <div className="flex items-baseline gap-2 text-sm">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Issue</span>
+                    <Link href={issueUrl} className="font-mono text-xs text-accent hover:underline break-all">
                         {project.repoOwner}/{project.repoName}#{project.issueNumber}
                     </Link>
                 </div>
 
-                <div className="flex gap-2 text-sm">
-                    <span className="text-muted w-20 shrink-0">Created</span>
+                <div className="flex items-baseline gap-2 text-sm">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Created</span>
                     <span>{formatDateAsDaysInPast(project.createdAt)}</span>
                 </div>
 
                 {project.completedAt && (
-                    <div className="flex gap-2 text-sm">
-                        <span className="text-muted w-20 shrink-0">Status</span>
-                        <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                    <div className="flex items-baseline gap-2 text-sm">
+                        <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Status</span>
+                        <span className="text-pine font-medium">
                             Completed {project.completedAt.toLocaleDateString()}
                         </span>
                     </div>
@@ -174,7 +175,7 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
 
             {project.events.length > 0 && (
                 <div>
-                    <h2 className="text-sm font-semibold text-muted uppercase tracking-wide mb-3">
+                    <h2 className={`${sectionLabelClass} mb-3`}>
                         Activity
                     </h2>
                     <div className="space-y-2">
@@ -213,7 +214,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
 
     return (
         <div className="max-w-2xl">
-            <Link href="/projects" className="text-sm text-muted hover:text-foreground transition-colors mb-4 inline-block">
+            <Link href="/projects" className="text-sm text-muted hover:text-accent transition-colors mb-4 inline-block">
                 &larr; All projects
             </Link>
             <Suspense fallback={<p role="status" className="text-muted">Loading project...</p>}>

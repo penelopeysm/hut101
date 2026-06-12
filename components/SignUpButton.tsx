@@ -3,6 +3,7 @@
 import { signUpAction } from "@/app/(main)/projects/[id]/actions";
 import { useConfirmAction } from "@/lib/hooks";
 import ErrorMessage from "@/components/ErrorMessage";
+import { buttonClass } from "@/lib/styles";
 
 export default function SignUpButton({ projectId, activeCount, maxActive }: { projectId: bigint; activeCount: number; maxActive: number }) {
     const atCap = activeCount >= maxActive;
@@ -18,7 +19,7 @@ export default function SignUpButton({ projectId, activeCount, maxActive }: { pr
                         disabled={isPending}
                         aria-busy={isPending}
                         onClick={confirm}
-                        className="cursor-pointer text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover transition-colors disabled:opacity-50"
+                        className="cursor-pointer text-sm font-semibold bg-accent text-white dark:text-background px-4 py-1.5 rounded-full hover:bg-accent-hover transition-colors disabled:opacity-50"
                     >
                         {isPending ? "Signing up..." : "Yes, sign me up"}
                     </button>
@@ -36,8 +37,8 @@ export default function SignUpButton({ projectId, activeCount, maxActive }: { pr
                         disabled={atCap}
                         onClick={startConfirming}
                         className={atCap
-                            ? "bg-muted/20 text-muted px-4 py-2 rounded-md text-sm font-medium cursor-not-allowed"
-                            : "cursor-pointer bg-accent text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-accent-hover transition-colors"
+                            ? "bg-muted/20 text-muted px-5 py-2.5 rounded-full text-sm font-medium cursor-not-allowed"
+                            : buttonClass
                         }
                     >
                         Sign up for this project

@@ -25,15 +25,15 @@ export default function MentoringProjectCard({ project, showEditControls, canEdi
                 <span className="bg-slate-100 dark:bg-slate-800/40 text-slate-600 dark:text-slate-400 text-xs font-medium px-2 py-0.5 rounded inline-block mb-2">Draft</span>
             )}
             {showEditControls && project.verification === "PENDING" && (
-                <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium px-1 py-0.5 rounded inline-block mb-2">Pending verification</span>
+                <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-sm font-medium px-2 py-0.5 rounded inline-block mb-2">Pending verification</span>
             )}
             {showEditControls && project.verification === "REJECTED" && (
-                <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium px-2 py-0.5 rounded inline-block mb-2">Changes requested</span>
+                <span className="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-sm font-medium px-2 py-0.5 rounded inline-block mb-2">Changes requested</span>
             )}
             <div className="flex flex-wrap items-baseline gap-2 mb-1">
                 <Link
                     href={`/projects/${project.id}`}
-                    className="font-medium hover:text-accent hover:underline transition-colors"
+                    className="font-serif text-lg hover:text-accent hover:underline transition-colors"
                 >
                     {project.title}
                 </Link>
@@ -41,13 +41,13 @@ export default function MentoringProjectCard({ project, showEditControls, canEdi
                 {canEdit && (
                     <Link
                         href={`/projects/${project.id}/edit`}
-                        className="ml-auto text-sm text-accent hover:underline"
+                        className="ml-auto text-smd text-accent hover:underline"
                     >
                         Edit
                     </Link>
                 )}
             </div>
-            <div className="text-sm text-muted flex flex-wrap gap-2">
+            <div className="text-smd text-muted flex flex-wrap gap-2">
                 <span>{formatDateAsDaysInPast(project.createdAt)}</span>
                 {project.student ? (
                     <span>· Student: <Link href={`/users/${project.student.id}`} className="text-accent hover:underline transition-colors">@{project.student.githubUsername}</Link></span>
@@ -63,7 +63,7 @@ export default function MentoringProjectCard({ project, showEditControls, canEdi
                     {project.technologies.map((pt) => (
                         <span
                             key={pt.technology.name}
-                            className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
+                            className="bg-surface text-muted px-2 py-0.5 rounded text-sm font-medium"
                         >
                             {pt.technology.name}
                         </span>

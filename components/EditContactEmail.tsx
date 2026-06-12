@@ -49,7 +49,7 @@ export default function EditContactEmail({ currentEmail }: { currentEmail: strin
                             }
                         });
                     }}
-                    className="cursor-pointer text-sm bg-accent text-white px-3 py-1.5 rounded-md hover:bg-accent-hover transition-colors disabled:opacity-50"
+                    className="cursor-pointer text-sm font-semibold bg-accent text-white dark:text-background px-4 py-1.5 rounded-full hover:bg-accent-hover transition-colors disabled:opacity-50"
                 >
                     {isPending ? "Saving..." : "Save"}
                 </button>

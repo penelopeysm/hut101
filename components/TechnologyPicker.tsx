@@ -121,13 +121,13 @@ export default function TechnologyPicker({
 
             {/* Selected pills + input */}
             <div
-                className="flex flex-wrap gap-1.5 w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-accent/40 focus-within:border-accent cursor-text"
+                className="flex flex-wrap gap-1.5 w-full border border-border bg-card/70 rounded-lg px-3.5 py-2 text-smd focus-within:ring-2 focus-within:ring-accent/40 focus-within:border-accent cursor-text"
                 onClick={() => inputRef.current?.focus()}
             >
                 {selected.map((name) => (
                     <span
                         key={name}
-                        className="inline-flex items-center gap-1 bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
+                        className="inline-flex items-center gap-1 bg-surface text-muted px-2 py-0.5 rounded font-mono text-xs"
                     >
                         {name}
                         <button
@@ -152,7 +152,7 @@ export default function TechnologyPicker({
                     onFocus={() => setOpen(true)}
                     onKeyDown={handleKeyDown}
                     placeholder={selected.length === 0 ? placeholder : ""}
-                    className="flex-1 min-w-[120px] bg-transparent outline-none text-sm py-0.5 placeholder:text-muted/50"
+                    className="flex-1 min-w-[120px] bg-transparent outline-none text-smd py-0.5 placeholder:text-muted/50"
                     role="combobox"
                     aria-expanded={open && available.length > 0}
                     aria-controls="tech-listbox"
@@ -167,7 +167,7 @@ export default function TechnologyPicker({
                     ref={listRef}
                     id="tech-listbox"
                     role="listbox"
-                    className="absolute z-10 mt-1 w-full max-h-48 overflow-auto rounded-md border border-border bg-card shadow-md"
+                    className="absolute z-10 mt-1 w-full max-h-48 overflow-auto rounded-lg border border-border bg-card shadow-md"
                 >
                     {available.map((t, i) => (
                         <li
@@ -180,7 +180,7 @@ export default function TechnologyPicker({
                                 add(t.name);
                             }}
                             onMouseEnter={() => setActiveIndex(i)}
-                            className={`cursor-pointer px-3 py-2 text-sm ${
+                            className={`cursor-pointer px-3 py-2 text-smd ${
                                 i === activeIndex
                                     ? "bg-surface text-foreground"
                                     : "text-muted hover:bg-surface"

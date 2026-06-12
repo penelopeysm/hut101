@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { DM_Sans, Lora, IBM_Plex_Mono } from "next/font/google";
+import { Karla, Vollkorn, IBM_Plex_Mono } from "next/font/google";
 import TopMenu from "@/components/TopMenu";
+import Footer from "@/components/Footer";
 import "./globals.css";
 import { auth } from "@/lib/auth";
 
-const fontSans = DM_Sans({
+const fontSans = Karla({
     variable: "--font-sans",
     subsets: ["latin"],
 });
 
-const fontSerif = Lora({
+const fontSerif = Vollkorn({
     variable: "--font-serif",
     subsets: ["latin"],
 });
@@ -44,18 +45,19 @@ export default async function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased`}
+                className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased flex flex-col min-h-screen`}
             >
                 <a
                     href="#main-content"
-                    className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-md focus:text-sm focus:font-medium"
+                    className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-accent focus:text-white dark:focus:text-background focus:px-4 focus:py-2 focus:rounded-full focus:text-sm focus:font-medium"
                 >
                     Skip to main content
                 </a>
                 <TopMenu user={topMenuProps} />
-                <main id="main-content" className="max-w-4xl mx-auto px-6 py-8">
+                <main id="main-content" className="w-full max-w-4xl mx-auto px-6 py-8 flex-1">
                     {children}
                 </main>
+                <Footer />
             </body>
         </html>
     );

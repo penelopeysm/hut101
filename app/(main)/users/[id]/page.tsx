@@ -52,29 +52,29 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                     className="w-16 h-16 rounded-full"
                 />
                 <div>
-                    <h2 className="text-xl font-semibold">{user.name}</h2>
+                    <h2 className="text-2xl font-semibold">{user.name}</h2>
                     <span className="text-muted">@{user.githubUsername}</span>
                 </div>
             </div>
 
             {isOwnProfile && (
                 <section className="mb-10">
-                    <h2 className="font-serif text-xl mb-4">Personal details</h2>
+                    <h2 className="font-serif text-2xl mb-4">Personal details</h2>
                     <div className="space-y-4">
                         <div>
-                            <span className="block text-sm text-muted mb-1">Contact email</span>
+                            <span className="block text-smd text-muted mb-1">Contact email</span>
                             <EditContactEmail currentEmail={session.user.contactEmail!} />
-                            <p className="text-xs text-muted mt-1">
+                            <p className="text-sm text-muted mt-1">
                                 This is not publicly viewable, but is shared with mentors and students you&rsquo;re matched with.
                             </p>
                         </div>
 
                         <div>
-                            <span className="block text-sm text-muted mb-1">Age verification</span>
+                            <span className="block text-smd text-muted mb-1">Age verification</span>
                             {user.confirmedOver18 ? (
-                                <p className="text-sm">Confirmed over 18</p>
+                                <p className="text-smd">Confirmed over 18</p>
                             ) : (
-                                <p className="text-sm text-amber-600 dark:text-amber-400">Not yet confirmed</p>
+                                <p className="text-smd text-amber-600 dark:text-amber-400">Not yet confirmed</p>
                             )}
                         </div>
                     </div>
@@ -82,13 +82,13 @@ async function ProfileContent({ userId }: { userId: bigint }) {
             )}
 
             <section className={`mb-10 ${isOwnProfile ? "pt-8 border-t border-border" : ""}`}>
-                <h2 className="font-serif text-xl mb-4">
+                <h2 className="font-serif text-2xl mb-4">
                     {isOwnProfile ? <>Projects I&rsquo;m mentoring</> : "Projects mentoring"}
-                    <span className="text-muted font-sans font-normal ml-2 text-sm">{mentoring.length}</span>
+                    <span className="text-muted font-sans font-normal ml-2 text-base">{mentoring.length}</span>
                 </h2>
 
                 {mentoring.length === 0 ? (
-                    <p className="text-muted text-sm">
+                    <p className="text-muted text-smd">
                         {isOwnProfile ? (
                             <>You haven&rsquo;t submitted any projects yet.{" "}
                                 <Link href="/submit" className="text-accent hover:underline">Submit one?</Link></>
@@ -111,13 +111,13 @@ async function ProfileContent({ userId }: { userId: bigint }) {
             </section>
 
             <section className="pt-8 border-t border-border">
-                <h2 className="font-serif text-xl mb-4">
+                <h2 className="font-serif text-2xl mb-4">
                     {isOwnProfile ? <>Projects I&rsquo;m working on</> : "Projects working on"}
-                    <span className="text-muted font-sans font-normal ml-2 text-sm">{studying.length}</span>
+                    <span className="text-muted font-sans font-normal ml-2 text-base">{studying.length}</span>
                 </h2>
 
                 {studying.length === 0 ? (
-                    <p className="text-muted text-sm">
+                    <p className="text-muted text-smd">
                         {isOwnProfile ? (
                             <>You haven&rsquo;t signed up for any projects yet.{" "}
                                 <Link href="/projects" className="text-accent hover:underline">Browse projects?</Link></>
@@ -135,13 +135,13 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                                 <div className="flex flex-wrap items-baseline gap-2 mb-1">
                                     <Link
                                         href={`/projects/${project.id}`}
-                                        className="font-medium hover:text-accent hover:underline transition-colors"
+                                        className="font-serif text-lg hover:text-accent hover:underline transition-colors"
                                     >
                                         {project.title}
                                     </Link>
                                     <DifficultyBadge difficulty={project.difficulty} />
                                 </div>
-                                <div className="text-sm text-muted flex flex-wrap gap-2">
+                                <div className="text-smd text-muted flex flex-wrap gap-2">
                                     <span>Mentor: <Link href={`/users/${project.mentor.id}`} className="text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link></span>
                                     <span>· {formatDateAsDaysInPast(project.createdAt)}</span>
                                     {project.completedAt && (
@@ -153,7 +153,7 @@ async function ProfileContent({ userId }: { userId: bigint }) {
                                         {project.technologies.map((pt) => (
                                             <span
                                                 key={pt.technology.name}
-                                                className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
+                                                className="bg-surface text-muted px-2 py-0.5 rounded text-sm font-medium"
                                             >
                                                 {pt.technology.name}
                                             </span>

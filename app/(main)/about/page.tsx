@@ -30,23 +30,23 @@ export default function Page() {
                     <div className="space-y-4">
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">1</span>
-                            <p className="text-sm"><strong>Browse</strong> the <Link href="/projects" className="text-accent hover:underline">project list</Link> and find something that matches your skills and interests.</p>
+                            <p className="text-smd"><strong>Browse</strong> the <Link href="/projects" className="text-accent hover:underline">project list</Link> and find something that matches your skills and interests.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">2</span>
-                            <p className="text-sm"><strong>Sign up</strong> for a project. Your mentor will get in touch to set up an initial meeting.</p>
+                            <p className="text-smd"><strong>Sign up</strong> for a project. Your mentor will get in touch to set up an initial meeting.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">3</span>
-                            <p className="text-sm"><strong>Work</strong> on the task. You&rsquo;ll have about two weeks, with your mentor available for questions.</p>
+                            <p className="text-smd"><strong>Work</strong> on the task. You&rsquo;ll have about two weeks, with your mentor available for questions.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">4</span>
-                            <p className="text-sm"><strong>Submit</strong> a pull request. Your mentor will review your code and help you get it merged.</p>
+                            <p className="text-smd"><strong>Submit</strong> a pull request. Your mentor will review your code and help you get it merged.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">5</span>
-                            <p className="text-sm"><strong>Reflect</strong> in an optional wrap-up discussion about what you learned and what to do next.</p>
+                            <p className="text-smd"><strong>Reflect</strong> in an optional wrap-up discussion about what you learned and what to do next.</p>
                         </div>
                     </div>
                 </div>
@@ -56,22 +56,22 @@ export default function Page() {
                     <div className="space-y-4">
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">1</span>
-                            <p className="text-sm"><strong>Find</strong> an issue on a project you know well. It should be self-contained and not block other work.</p>
+                            <p className="text-smd"><strong>Find</strong> an issue on a project you know well. It should be self-contained and not block other work.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">2</span>
-                            <p className="text-sm"><strong><a href="/submit" className="text-accent hover:underline">Submit</a></strong> it with a description, difficulty level, and a link to the GitHub issue.</p>
+                            <p className="text-smd"><strong><a href="/submit" className="text-accent hover:underline">Submit</a></strong> it with a description, difficulty level, and a link to the GitHub issue.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">3</span>
-                            <p className="text-sm"><strong>Meet</strong> your student and establish ground rules: project background, support level, timescale, and contact method.</p>
+                            <p className="text-smd"><strong>Meet</strong> your student and establish ground rules: project background, support level, timescale, and contact method.</p>
                         </div>
                         <div className="flex gap-4">
                             <span className="font-serif text-2xl text-accent leading-none mt-0.5">4</span>
-                            <p className="text-sm"><strong>Support</strong> them as they work, review their code, and help get the PR merged.</p>
+                            <p className="text-smd"><strong>Support</strong> them as they work, review their code, and help get the PR merged.</p>
                         </div>
                     </div>
-                    <p className="text-sm text-muted mt-6">
+                    <p className="text-smd text-muted mt-6">
                         We recommend 2&ndash;3 contact hours total: an initial meeting, a check-in before the PR, and a wrap-up.
                     </p>
                 </div>

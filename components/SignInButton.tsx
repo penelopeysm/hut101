@@ -1,13 +1,11 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { buttonClass } from "@/lib/styles";
 
 export default function SignInButton() {
     return (
-        <button
-            onClick={() => signIn("github")}
-            className="bg-accent text-white font-medium px-6 py-2.5 rounded-lg hover:bg-accent/90 transition-colors"
-        >
+        <button onClick={() => signIn("github")} className={buttonClass}>
             Sign in with GitHub
         </button>
     );

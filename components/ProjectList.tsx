@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { Difficulty } from "@/lib/generated/enums";
 import DifficultyBadge from "@/components/DifficultyBadge";
+import HutIcon from "@/components/HutIcon";
 import TechnologyPicker from "@/components/TechnologyPicker";
 import { projectStatus, type ProjectStatus, formatDateAsDaysInPast } from "@/lib/shared-utils";
 
@@ -36,58 +37,88 @@ const STATUS_FILTER_LABELS: Record<ProjectStatus, string> = { open: "Open", in_p
 
 // --- Project Card ---
 
-const STATUS_BADGE = {
-    open: "text-emerald-600 dark:text-emerald-400",
-    in_progress: "text-amber-600 dark:text-amber-400",
-    completed: "text-muted",
+const STATUS_CONFIG = {
+    open: { label: "Open", textClass: "text-pine", dotClass: "bg-pine animate-[pulse_2.5s_ease-in-out_infinite]" },
+    in_progress: { label: "In progress", textClass: "text-amber-600 dark:text-amber-400", dotClass: "bg-amber-500" },
+    completed: { label: "Completed", textClass: "text-muted", dotClass: "bg-muted" },
 } as const;
 
-const STATUS_LABEL = {
-    open: "Open",
-    in_progress: "In progress",
-    completed: "Completed",
-} as const;
+function StatusChip({ status }: { status: ProjectStatus }) {
+    const { label, textClass, dotClass } = STATUS_CONFIG[status];
+    return (
+        <span className={`inline-flex items-center gap-1.5 text-sm font-semibold ${textClass}`}>
+            <span className={`h-2 w-2 rounded-full ${dotClass}`} aria-hidden="true" />
+            {label}
+        </span>
+    );
+}
+
+// Multi-select filter chip: the checkmark signals "toggle", not "radio"
+function FilterPill({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            aria-pressed={selected}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-sm font-medium border transition-colors cursor-pointer ${selected
+                    ? "bg-accent text-white dark:text-background border-accent"
+                    : "bg-transparent text-muted border-border hover:border-accent/50"
+                }`}
+        >
+            {/* Always rendered so the pill width doesn't change on toggle */}
+            <svg
+                width="11"
+                height="11"
+                viewBox="0 0 12 12"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className={`transition-opacity ${selected ? "opacity-100" : "opacity-30"}`}
+            >
+                <path d="M2 6.5 L4.5 9 L10 3" />
+            </svg>
+            {label}
+        </button>
+    );
+}
 
 function ProjectCard({ project }: { project: SerializedProject }) {
     const status = projectStatus(project);
 
     return (
-        <div
-            className="group bg-card border border-border rounded-lg p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+        <article
+            className="group bg-card border border-border rounded-xl p-5 sm:p-6 transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_14px_30px_-16px_rgba(124,77,33,0.4)]"
         >
-            <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                <h2 className="text-lg font-semibold">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-2">
+                <h2 className="font-serif text-xl">
                     <Link href={`/projects/${project.id}`} className="group-hover:text-accent transition-colors">
                         {project.title}
                     </Link>
                 </h2>
-                <span className={`text-xs font-medium ${STATUS_BADGE[status]}`}>{STATUS_LABEL[status]}</span>
+                <StatusChip status={status} />
                 <DifficultyBadge difficulty={project.difficulty} />
             </div>
 
-            <p className="text-muted mb-4">{project.description}</p>
+            <p className="text-smd text-muted leading-relaxed mb-5">{project.description}</p>
 
-            <div className="flex flex-wrap items-center gap-5 text-sm text-muted mb-3">
-                <span>Mentor: <Link href={`/users/${project.mentor.id}`} className="text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link></span>
-                <span>{formatDateAsDaysInPast(new Date(project.createdAt))}</span>
-                <span className="text-accent break-all">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-dotted border-border pt-3.5 text-sm text-muted">
+                <span>
+                    with <Link href={`/users/${project.mentor.id}`} className="font-medium text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link>
+                </span>
+                <span className="font-mono text-xs bg-surface px-2 py-1 rounded break-all">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
                 </span>
+                {project.technologies.map((pt) => (
+                    <span key={pt.technology.name} className="font-mono text-xs">
+                        #{pt.technology.name.toLowerCase()}
+                    </span>
+                ))}
+                <span className="ml-auto text-xs">{formatDateAsDaysInPast(new Date(project.createdAt))}</span>
             </div>
-
-            {project.technologies.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                    {project.technologies.map((pt) => (
-                        <span
-                            key={pt.technology.name}
-                            className="bg-surface text-muted px-2 py-0.5 rounded text-xs font-medium"
-                        >
-                            {pt.technology.name}
-                        </span>
-                    ))}
-                </div>
-            )}
-        </div>
+        </article>
     );
 }
 
@@ -173,41 +204,31 @@ export default function ProjectList({
             {/* Filters */}
             <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] md:grid-rows-2 md:grid-flow-col gap-x-6 gap-y-3 items-center">
                 {/* Status — row 1 col 1 */}
-                <div className="flex items-center gap-2 ml-0.5">
-                    <span className="text-xs text-muted font-semibold">Status</span>
+                <div className="flex items-center gap-3 ml-0.5">
+                    <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">Status</span>
                     <div className="flex gap-1.5">
                         {STATUSES.map((s) => (
-                            <button
+                            <FilterPill
                                 key={s}
-                                type="button"
+                                label={STATUS_FILTER_LABELS[s]}
+                                selected={selectedStatuses.includes(s)}
                                 onClick={() => toggleStatus(s)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors cursor-pointer ${selectedStatuses.includes(s)
-                                        ? "bg-accent text-white border-accent"
-                                        : "bg-transparent text-muted border-border hover:border-accent/50"
-                                    }`}
-                            >
-                                {STATUS_FILTER_LABELS[s]}
-                            </button>
+                            />
                         ))}
                     </div>
                 </div>
 
                 {/* Difficulty — row 2 col 1 */}
-                <div className="flex items-center gap-2 ml-0.5">
-                    <span className="text-xs text-muted font-semibold">Difficulty</span>
+                <div className="flex items-center gap-3 ml-0.5">
+                    <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">Difficulty</span>
                     <div className="flex gap-1.5">
                         {DIFFICULTIES.map((d) => (
-                            <button
+                            <FilterPill
                                 key={d}
-                                type="button"
+                                label={DIFFICULTY_LABELS[d]}
+                                selected={selectedDifficulties.includes(d)}
                                 onClick={() => toggleDifficulty(d)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors cursor-pointer ${selectedDifficulties.includes(d)
-                                        ? "bg-accent text-white border-accent"
-                                        : "bg-transparent text-muted border-border hover:border-accent/50"
-                                    }`}
-                            >
-                                {DIFFICULTY_LABELS[d]}
-                            </button>
+                            />
                         ))}
                     </div>
                 </div>
@@ -228,7 +249,7 @@ export default function ProjectList({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search project (titles and descriptions)..."
-                    className="w-full border border-border bg-transparent rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none placeholder:text-muted/50"
+                    className="w-full border border-border bg-card/70 rounded-lg px-3.5 py-2 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none placeholder:text-muted/60"
                 />
             </div>
 
@@ -239,7 +260,7 @@ export default function ProjectList({
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as SortOption)}
-                        className="border border-border bg-transparent rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none"
+                        className="border border-border bg-card/70 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none"
                     >
                         <option value="newest">Newest first</option>
                         <option value="oldest">Oldest first</option>
@@ -257,7 +278,10 @@ export default function ProjectList({
                     ))}
                 </div>
             ) : (
-                <p className="text-muted text-center py-8">No projects match your filters.</p>
+                <div className="text-center py-14 text-muted">
+                    <HutIcon className="mx-auto mb-3 h-7 w-7 opacity-50" />
+                    <p>Nothing out here &mdash; try loosening a filter or two.</p>
+                </div>
             )}
         </div>
     );
