@@ -5,7 +5,7 @@ import type { Difficulty } from "@/lib/generated/enums";
 const config: Record<Difficulty, { label: string; colorClass: string; shape: React.ReactNode }> = {
     EASY: {
         label: "Easy",
-        colorClass: "text-[#4e7d43] dark:text-[#a9c596]",
+        colorClass: "text-pine",
         shape: <circle cx="6" cy="6" r="4.5" />,
     },
     MEDIUM: {

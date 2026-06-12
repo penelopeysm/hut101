@@ -7,6 +7,7 @@ import DifficultyBadge from "@/components/DifficultyBadge";
 import HutIcon from "@/components/HutIcon";
 import TechnologyPicker from "@/components/TechnologyPicker";
 import { projectStatus, type ProjectStatus, formatDateAsDaysInPast } from "@/lib/shared-utils";
+import { inputClass, sectionLabelClass } from "@/lib/styles";
 
 type Technology = { id: string; name: string };
 
@@ -108,7 +109,7 @@ function ProjectCard({ project }: { project: SerializedProject }) {
                 <span>
                     with <Link href={`/users/${project.mentor.id}`} className="font-medium text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link>
                 </span>
-                <span className="font-mono text-xs bg-surface px-2 py-1 rounded break-all">
+                <span className="font-mono text-xs break-all">
                     {project.repoOwner}/{project.repoName}#{project.issueNumber}
                 </span>
                 {project.technologies.map((pt) => (
@@ -183,10 +184,10 @@ export default function ProjectList({
         const sorted = [...result];
         switch (sortBy) {
             case "newest":
-                sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
                 break;
             case "oldest":
-                sorted.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                sorted.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
                 break;
             case "difficulty-asc":
                 sorted.sort((a, b) => DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty]);
@@ -200,12 +201,12 @@ export default function ProjectList({
     }, [projects, searchQuery, selectedStatuses, selectedDifficulties, selectedTechnologies, sortBy]);
 
     return (
-        <div className="space-y-4 animate-fade-in">
+        <div className="animate-fade-in">
             {/* Filters */}
-            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] md:grid-rows-2 md:grid-flow-col gap-x-6 gap-y-3 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] md:grid-rows-2 md:grid-flow-col gap-x-6 gap-y-3 items-center mb-4">
                 {/* Status — row 1 col 1 */}
                 <div className="flex items-center gap-3 ml-0.5">
-                    <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">Status</span>
+                    <span className={sectionLabelClass}>Status</span>
                     <div className="flex gap-1.5">
                         {STATUSES.map((s) => (
                             <FilterPill
@@ -220,7 +221,7 @@ export default function ProjectList({
 
                 {/* Difficulty — row 2 col 1 */}
                 <div className="flex items-center gap-3 ml-0.5">
-                    <span className="font-mono text-xs font-semibold uppercase tracking-wider text-muted">Difficulty</span>
+                    <span className={sectionLabelClass}>Difficulty</span>
                     <div className="flex gap-1.5">
                         {DIFFICULTIES.map((d) => (
                             <FilterPill
@@ -249,12 +250,12 @@ export default function ProjectList({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search project (titles and descriptions)..."
-                    className="w-full border border-border bg-card/70 rounded-lg px-3.5 py-2 text-sm focus:ring-2 focus:ring-accent/40 focus:border-accent outline-none placeholder:text-muted/60"
+                    className={inputClass}
                 />
             </div>
 
             {/* Sort */}
-            <div className="flex items-center justify-end border-t border-border pt-3">
+            <div className="flex items-center justify-end border-t border-border pt-3 mb-8">
                 <label className="flex items-center gap-2 text-sm text-muted">
                     Sort by
                     <select
@@ -272,7 +273,7 @@ export default function ProjectList({
 
             {/* Project cards */}
             {filtered.length > 0 ? (
-                <div className="grid gap-4">
+                <div className="grid gap-5">
                     {filtered.map((project) => (
                         <ProjectCard key={project.id} project={project} />
                     ))}

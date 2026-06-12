@@ -14,6 +14,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 import { formatDateAsDaysInPast, projectStatus } from "@/lib/utils";
 import { sectionLabelClass } from "@/lib/styles";
+
+const factLabelClass = "font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -114,7 +116,7 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
 
             <div className="bg-card border border-border rounded-xl p-5 space-y-3 mb-6">
                 <div className="flex items-baseline gap-2 text-sm">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Mentor</span>
+                    <span className={factLabelClass}>Mentor</span>
                     <span>
                         <Link href={`/users/${project.mentor.id}`} className="text-accent hover:underline transition-colors">@{project.mentor.githubUsername}</Link>
                     </span>
@@ -124,7 +126,7 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
                 </div>
 
                 <div className="flex items-baseline gap-2 text-sm">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Student</span>
+                    <span className={factLabelClass}>Student</span>
                     <span>
                         {project.student === null
                             ? "No one yet — this project is open!"
@@ -134,20 +136,20 @@ async function ProjectDetail({ projectId, isNew, isPending, isDraft }: { project
                 </div>
 
                 <div className="flex items-baseline gap-2 text-sm">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Issue</span>
+                    <span className={factLabelClass}>Issue</span>
                     <Link href={issueUrl} className="font-mono text-xs text-accent hover:underline break-all">
                         {project.repoOwner}/{project.repoName}#{project.issueNumber}
                     </Link>
                 </div>
 
                 <div className="flex items-baseline gap-2 text-sm">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Created</span>
+                    <span className={factLabelClass}>Created</span>
                     <span>{formatDateAsDaysInPast(project.createdAt)}</span>
                 </div>
 
                 {project.completedAt && (
                     <div className="flex items-baseline gap-2 text-sm">
-                        <span className="font-mono text-[11px] uppercase tracking-wider text-muted w-20 shrink-0">Status</span>
+                        <span className={factLabelClass}>Status</span>
                         <span className="text-pine font-medium">
                             Completed {project.completedAt.toLocaleDateString()}
                         </span>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signIn, signOut } from "next-auth/react";
 import HutIcon from "@/components/HutIcon";
+import { buttonSmallClass } from "@/lib/styles";
 
 interface TopMenuUser {
     id: bigint;
@@ -17,9 +18,6 @@ interface TopMenuUser {
 interface TopMenuProps {
     user: TopMenuUser | null;
 }
-
-const loginButtonClass =
-    "cursor-pointer bg-accent text-white dark:text-background px-4 py-1.5 rounded-full text-sm font-semibold hover:bg-accent-hover transition-colors";
 
 export default function TopMenu({ user }: TopMenuProps) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -84,7 +82,7 @@ export default function TopMenu({ user }: TopMenuProps) {
                     ) : (
                         <button
                             onClick={() => signIn("github")}
-                            className={`hidden sm:inline ${loginButtonClass}`}
+                            className={`hidden sm:inline ${buttonSmallClass}`}
                         >
                             Login with GitHub
                         </button>
@@ -143,7 +141,7 @@ export default function TopMenu({ user }: TopMenuProps) {
                     ) : (
                         <button
                             onClick={() => { signIn("github"); setMenuOpen(false); }}
-                            className={loginButtonClass}
+                            className={buttonSmallClass}
                         >
                             Login with GitHub
                         </button>
